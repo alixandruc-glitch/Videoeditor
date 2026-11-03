@@ -1,3 +1,4 @@
 tools/models/
 assets/voice.wav
 __pycache__/
+samples/

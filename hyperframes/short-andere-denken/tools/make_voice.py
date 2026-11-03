@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
 """Sprecherstimme für das Short erzeugen, einpassen, mischen und (optional) rendern.
 
-Standard (empfohlen) – deutsche Piper-Stimme "Thorsten", läuft komplett lokal:
+Standard (empfohlen) – Microsoft-Neural-Stimme "Florian" über edge-tts (kostenlos, ohne Key):
 
     python3 tools/make_voice.py --render
 
-Was passiert:
-  1. installiert bei Bedarf das Python-Paket piper-tts
-  2. lädt einmalig die Stimme nach tools/models/ (~110 MB, von huggingface.co)
-  3. spricht jede Zeile aus assets/sfx.json ("vo") und passt sie in ihr Zeitfenster ein
-     (bei Bedarf leicht beschleunigt, Tonhöhe bleibt gleich)
-  4. schreibt assets/voice.wav und mischt sie mit tools/make_soundtrack.py in
-     assets/soundtrack.mp3 (Musik wird unter der Stimme automatisch leiser)
-  5. mit --render: rendert renders/niemand-denkt-an-dich.mp4
+Stimmen vergleichen (schreibt Hörproben nach samples/):
 
-Weitere Optionen:
-    --voice de_DE-thorsten-high    andere Piper-Stimme, z. B. de_DE-thorsten-medium,
-                                   de_DE-thorsten_emotional-medium, de_DE-kerstin-low,
-                                   de_DE-eva_k-x_low, de_DE-ramona-low
-    --speed 1.12                   Sprechtempo (1.0 = normal)
-    --engine files                 eigene Aufnahmen aus assets/voice-lines/01.wav, 02.wav, …
-                                   (Text dazu: voiceover.txt, mit --write-script erzeugen)
-    --engine espeak                Roboterstimme ohne Download (nur zum Testen)
+    python3 tools/make_voice.py --samples
+
+Was passiert:
+  1. installiert bei Bedarf das Python-Paket edge-tts bzw. piper-tts
+  2. spricht jede Zeile aus assets/sfx.json ("vo") und passt sie in ihr Zeitfenster ein
+     (bei Bedarf leicht beschleunigt, Tonhöhe bleibt gleich)
+  3. schreibt assets/voice.wav und mischt sie mit tools/make_soundtrack.py in
+     assets/soundtrack.mp3 (Musik wird unter der Stimme automatisch leiser)
+  4. mit --render: rendert renders/niemand-denkt-an-dich.mp4
+
+Engines und Stimmen:
+    --engine edge  (Standard)   --voice de-DE-FlorianMultilingualNeural (Standard),
+                                de-DE-ConradNeural, de-DE-KillianNeural,
+                                de-DE-SeraphinaMultilingualNeural, de-DE-KatjaNeural, …
+    --engine piper              offline; --voice de_DE-thorsten-high (Standard),
+                                de_DE-thorsten_emotional-medium, de_DE-kerstin-low, …
+                                (lädt das Modell einmalig nach tools/models/, ~110 MB)
+    --engine files              eigene Aufnahmen aus assets/voice-lines/01.wav, 02.wav, …
+                                (Text dazu: voiceover.txt, mit --write-script erzeugen)
+    --engine espeak             Roboterstimme ohne Download (nur zum Testen)
+    --speed 1.15                Sprechtempo (1.0 = normal)
 
 Voraussetzungen: Python 3.9+, numpy, ffmpeg.
 """
@@ -109,6 +115,27 @@ class PiperEngine:
         return decode(path)
 
 
+class EdgeEngine:
+    """Microsofts deutsche Neural-Stimmen über das Paket edge-tts (kostenlos, ohne API-Key, braucht Internet)."""
+
+    def __init__(self, voice, speed):
+        try:
+            import edge_tts  # noqa: F401
+        except ImportError:
+            print("→ Installiere edge-tts …")
+            subprocess.run([sys.executable, "-m", "pip", "install", "edge-tts"], check=True)
+        import edge_tts
+
+        self.edge_tts = edge_tts
+        self.voice = voice
+        self.rate = f"{round((speed - 1) * 100):+d}%"
+
+    def say(self, text, i, tmp):
+        path = os.path.join(tmp, f"line{i:02d}.mp3")
+        self.edge_tts.Communicate(text, self.voice, rate=self.rate).save_sync(path)
+        return decode(path)
+
+
 class EspeakEngine:
     """Notlösung ohne Download (klingt robotisch). Braucht: pip install espeakng-loader"""
 
@@ -158,6 +185,38 @@ class FilesEngine:
 
 
 # ---------------------------------------------------------------- Ablauf
+# Kandidaten für --samples: (Engine, Stimme, Beschreibung)
+CANDIDATES = [
+    ("edge", "de-DE-FlorianMultilingualNeural", "männlich, warm, ausdrucksstark – Empfehlung"),
+    ("edge", "de-DE-ConradNeural", "männlich, tief, souverän"),
+    ("edge", "de-DE-KillianNeural", "männlich, jung, locker"),
+    ("edge", "de-DE-SeraphinaMultilingualNeural", "weiblich, warm, natürlich"),
+    ("edge", "de-DE-KatjaNeural", "weiblich, klar, sachlich"),
+    ("piper", "de_DE-thorsten-high", "männlich, offline, eher Nachrichtensprecher"),
+]
+SAMPLE_TEXT = (
+    "Niemand denkt an dich. Klingt hart? Es ist die beste Nachricht deines Lebens. "
+    "Alle anderen stehen in ihrem eigenen Spottlait. Und genau das macht dich frei."
+)
+
+
+def make_samples(speed):
+    out_dir = os.path.join(PROJECT, "samples")
+    os.makedirs(out_dir, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, (eng, voice, desc) in enumerate(CANDIDATES):
+            try:
+                engine = EdgeEngine(voice, speed or 1.08) if eng == "edge" else PiperEngine(voice, speed or 1.12)
+                clip = engine.say(SAMPLE_TEXT, i, tmp)
+                path = os.path.join(out_dir, f"{i + 1}-{voice}.mp3")
+                write_wav(os.path.join(tmp, "s.wav"), clip / (np.max(np.abs(clip)) + 1e-9) * 0.9)
+                subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", os.path.join(tmp, "s.wav"), "-b:a", "128k", path], check=True)
+                print(f"  ✓ {os.path.relpath(path, PROJECT)}   ({desc})")
+            except Exception as e:  # eine fehlende Stimme soll die anderen nicht blockieren
+                print(f"  ✗ {voice}: {e}")
+    print("→ Anhören, Favorit wählen, dann z. B.: python3 tools/make_voice.py --engine edge --voice <Name> --render")
+
+
 def write_script(vo):
     path = os.path.join(PROJECT, "voiceover.txt")
     with open(path, "w", encoding="utf-8") as f:
@@ -219,9 +278,10 @@ def build_voice(engine, vo, duration):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--engine", choices=["piper", "files", "espeak"], default="piper")
-    ap.add_argument("--voice", default="de_DE-thorsten-high")
-    ap.add_argument("--speed", type=float, default=1.12)
+    ap.add_argument("--engine", choices=["edge", "piper", "files", "espeak"], default="edge")
+    ap.add_argument("--voice", help="Stimme (Standard: de-DE-FlorianMultilingualNeural bzw. de_DE-thorsten-high)")
+    ap.add_argument("--speed", type=float, help="Sprechtempo (Standard: 1.08 bei edge, 1.12 bei piper)")
+    ap.add_argument("--samples", action="store_true", help="Hörproben mehrerer Stimmen nach samples/ schreiben")
     ap.add_argument("--render", action="store_true", help="danach das MP4 rendern")
     ap.add_argument("--write-script", action="store_true", help="nur voiceover.txt schreiben")
     args = ap.parse_args()
@@ -237,11 +297,16 @@ def main():
     if args.write_script:
         write_script(vo)
         return
+    if args.samples:
+        make_samples(args.speed)
+        return
 
-    if args.engine == "piper":
-        engine = PiperEngine(args.voice, args.speed)
+    if args.engine == "edge":
+        engine = EdgeEngine(args.voice or "de-DE-FlorianMultilingualNeural", args.speed or 1.08)
+    elif args.engine == "piper":
+        engine = PiperEngine(args.voice or "de_DE-thorsten-high", args.speed or 1.12)
     elif args.engine == "espeak":
-        engine = EspeakEngine(args.speed)
+        engine = EspeakEngine(args.speed or 1.0)
     else:
         engine = FilesEngine()
 

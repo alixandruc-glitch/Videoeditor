@@ -71,34 +71,51 @@ aufnehmen und auf 1080 × 1920 zuschneiden. Der HyperFrames-Render ist aber deut
 
 Der komplette Sprechertext liegt mit Zeitmarken in `index.html` (`window.__vo`) und als
 Aufnahmeliste in `voiceover.txt`. Ein Befehl erzeugt die Stimme, passt jede Zeile in ihr
-Zeitfenster ein, senkt die Musik darunter automatisch ab und rendert das Video:
+Zeitfenster ein, senkt die Musik darunter automatisch ab und rendert das Video.
+
+### 1. Stimme aussuchen
 
 ```bash
-# im Hauptverzeichnis des Repos (Windows: "python" statt "python3" in package.json)
-npm run short:voice
+npm run short:voice-samples      # im Hauptverzeichnis des Repos
 ```
 
-Das entspricht `python3 tools/make_voice.py --render` in diesem Ordner. Beim ersten Lauf
-werden `piper-tts` (pip) und die deutsche Stimme **Thorsten** (~110 MB, nach `tools/models/`)
-heruntergeladen. Alles läuft lokal und kostenlos.
+Schreibt dieselbe Testpassage in mehreren Stimmen nach `hyperframes/short-andere-denken/samples/`:
 
-Optionen:
+| Datei | Stimme | Charakter |
+|---|---|---|
+| `1-de-DE-FlorianMultilingualNeural.mp3` | Florian | männlich, warm, ausdrucksstark – **Empfehlung** |
+| `2-de-DE-ConradNeural.mp3` | Conrad | männlich, tief, souverän |
+| `3-de-DE-KillianNeural.mp3` | Killian | männlich, jung, locker |
+| `4-de-DE-SeraphinaMultilingualNeural.mp3` | Seraphina | weiblich, warm, natürlich |
+| `5-de-DE-KatjaNeural.mp3` | Katja | weiblich, klar, sachlich |
+| `6-de_DE-thorsten-high.mp3` | Thorsten (Piper) | männlich, offline, eher Nachrichtensprecher |
+
+### 2. Video mit Stimme rendern
+
+```bash
+npm run short:voice              # Standard: Florian
+# andere Stimme / Tempo (im Ordner hyperframes/short-andere-denken):
+python3 tools/make_voice.py --voice de-DE-ConradNeural --speed 1.12 --render
+```
+
+Windows: in `package.json` `python3` durch `python` ersetzen.
 
 | Option | Wirkung |
 |---|---|
-| `--voice de_DE-thorsten-medium` | andere Stimme (auch `de_DE-thorsten_emotional-medium`, `de_DE-kerstin-low`, `de_DE-ramona-low`, `de_DE-eva_k-x_low`) |
-| `--speed 1.2` | schneller sprechen (Standard 1.12) |
-| `--engine files` | **eigene Aufnahmen** verwenden: `assets/voice-lines/01.m4a`, `02.m4a`, … (eine Datei pro Zeile aus `voiceover.txt`, Format egal) |
+| `--engine edge` (Standard) | Microsoft-Neural-Stimmen über `edge-tts` – kostenlos, ohne API-Key, braucht Internet |
+| `--engine piper` | offline (Thorsten u. a.), lädt das Modell einmalig nach `tools/models/` (~110 MB) |
+| `--engine files` | **eigene Aufnahmen**: `assets/voice-lines/01.m4a`, `02.m4a`, … (eine Datei pro Zeile aus `voiceover.txt`) |
+| `--speed 1.15` | schneller sprechen (Standard 1.08 bei edge, 1.12 bei piper) |
 | ohne `--render` | nur Tonspur erzeugen, z. B. zum Anhören von `assets/soundtrack.mp3` |
 
-Die Ausgabe zeigt für jede Zeile, wo sie liegt und ob sie beschleunigt werden musste:
+Die Ausgabe zeigt für jede Zeile, wo sie liegt und ob sie beschleunigt werden musste.
+Klingt ein Wort falsch, schreib es in `window.__vo` lautschriftlich um (wie „Spottlait“) und
+exportiere neu: `node tools/export-sfx.cjs` (braucht `npm i -D playwright`).
 
-```
-  05  9.04s  1.70s  ×1.12  Psychologen nennen das den Spottlait-Effekt.
-```
-
-Klingt ein Wort falsch, schreib es in `window.__vo` lautschriftlich um (wie „Spottlait“ oder
-„Tie-Schört“) und exportiere die Liste neu: `node tools/export-sfx.cjs` (braucht `npm i -D playwright`).
+> **Hinweis zur Nutzung:** `edge-tts` nutzt inoffiziell die Vorlesefunktion von Microsoft Edge.
+> Für einen monetarisierten Kanal ist der saubere Weg dieselbe Stimme über **Azure AI Speech**
+> (offizielle Lizenz, Gratiskontingent) oder ein Anbieter wie ElevenLabs – oder Piper bzw. die
+> eigene Aufnahme.
 
 ## Anpassen
 
