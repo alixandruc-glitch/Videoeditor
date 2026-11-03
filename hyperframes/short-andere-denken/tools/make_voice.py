@@ -21,6 +21,8 @@ Engines und Stimmen:
     --engine edge  (Standard)   --voice de-DE-ConradNeural (Standard),
                                 de-DE-FlorianMultilingualNeural, de-DE-KillianNeural,
                                 de-DE-SeraphinaMultilingualNeural, de-DE-KatjaNeural, …
+    --engine google             Google Cloud TTS, Schlüssel in GOOGLE_TTS_API_KEY;
+                                --voice de-DE-Chirp3-HD-Charon (Standard), -Orus, -Algenib, …
     --engine piper              offline; --voice de_DE-thorsten-high (Standard),
                                 de_DE-thorsten_emotional-medium, de_DE-kerstin-low, …
                                 (lädt das Modell einmalig nach tools/models/, ~110 MB)
@@ -136,6 +138,60 @@ class EdgeEngine:
         return decode(path)
 
 
+class GoogleEngine:
+    """Google Cloud Text-to-Speech (REST). Schlüssel aus der Umgebungsvariable GOOGLE_TTS_API_KEY,
+    sonst Token von `gcloud auth print-access-token` (Projekt aus `gcloud config`)."""
+
+    URL = "https://texttospeech.googleapis.com/v1/text:synthesize"
+
+    def __init__(self, voice, speed):
+        self.voice = voice
+        self.speed = speed
+        self.key = os.environ.get("GOOGLE_TTS_API_KEY")
+        self.headers = {"Content-Type": "application/json; charset=utf-8"}
+        if not self.key:
+            gcloud = shutil.which("gcloud")
+            if not gcloud:
+                raise SystemExit("GOOGLE_TTS_API_KEY fehlt (und kein gcloud gefunden).")
+            token = subprocess.run([gcloud, "auth", "print-access-token"], capture_output=True, text=True)
+            if token.returncode != 0:
+                raise SystemExit("GOOGLE_TTS_API_KEY fehlt und gcloud ist nicht angemeldet.")
+            self.headers["Authorization"] = "Bearer " + token.stdout.strip()
+            project = subprocess.run([gcloud, "config", "get-value", "project"], capture_output=True, text=True).stdout.strip()
+            if project and project != "(unset)":
+                self.headers["x-goog-user-project"] = project
+
+    def say(self, text, i, tmp):
+        import base64
+        import urllib.error
+        import urllib.request
+
+        lang = "-".join(self.voice.split("-")[:2])
+        body = {
+            "input": {"text": text},
+            "voice": {"languageCode": lang, "name": self.voice},
+            "audioConfig": {"audioEncoding": "LINEAR16", "sampleRateHertz": 24000},
+        }
+        url = self.URL + (f"?key={self.key}" if self.key else "")
+        req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=self.headers, method="POST")
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                audio = base64.b64decode(json.load(r)["audioContent"])
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode(errors="replace")
+            try:
+                detail = json.loads(detail)["error"]["message"]
+            except Exception:
+                pass
+            raise RuntimeError(f"Google TTS {e.code}: {detail}") from None
+        path = os.path.join(tmp, f"line{i:02d}.wav")
+        with open(path, "wb") as f:
+            f.write(audio)  # LINEAR16 kommt als WAV mit Header
+        clip = decode(path)
+        # Tempo per atempo (Tonhöhe bleibt) – funktioniert bei allen Google-Stimmtypen gleich
+        return change_tempo(clip, self.speed, tmp) if abs(self.speed - 1) > 0.01 else clip
+
+
 class EspeakEngine:
     """Notlösung ohne Download (klingt robotisch). Braucht: pip install espeakng-loader"""
 
@@ -185,6 +241,16 @@ class FilesEngine:
 
 
 # ---------------------------------------------------------------- Ablauf
+# Kandidaten für --samples --engine google
+GOOGLE_CANDIDATES = [
+    ("google", "de-DE-Chirp3-HD-Charon", "männlich, tief, ruhig-souverän – Conrad-ähnlich, Standard"),
+    ("google", "de-DE-Chirp3-HD-Orus", "männlich, fest, bestimmt"),
+    ("google", "de-DE-Chirp3-HD-Algenib", "männlich, rau, markant"),
+    ("google", "de-DE-Chirp3-HD-Fenrir", "männlich, energisch"),
+    ("google", "de-DE-Neural2-H", "männlich, Neural2 (günstiger)"),
+    ("google", "de-DE-Studio-B", "männlich, Studio-Qualität"),
+]
+
 # Kandidaten für --samples: (Engine, Stimme, Beschreibung)
 CANDIDATES = [
     ("edge", "de-DE-ConradNeural", "männlich, tief, souverän – gewählt"),
@@ -200,13 +266,19 @@ SAMPLE_TEXT = (
 )
 
 
-def make_samples(speed):
+def make_samples(speed, which):
     out_dir = os.path.join(PROJECT, "samples")
     os.makedirs(out_dir, exist_ok=True)
+    candidates = GOOGLE_CANDIDATES if which == "google" else CANDIDATES
     with tempfile.TemporaryDirectory() as tmp:
-        for i, (eng, voice, desc) in enumerate(CANDIDATES):
+        for i, (eng, voice, desc) in enumerate(candidates):
             try:
-                engine = EdgeEngine(voice, speed or 1.08) if eng == "edge" else PiperEngine(voice, speed or 1.12)
+                if eng == "google":
+                    engine = GoogleEngine(voice, speed or 1.1)
+                elif eng == "edge":
+                    engine = EdgeEngine(voice, speed or 1.1)
+                else:
+                    engine = PiperEngine(voice, speed or 1.12)
                 clip = engine.say(SAMPLE_TEXT, i, tmp)
                 path = os.path.join(out_dir, f"{i + 1}-{voice}.mp3")
                 write_wav(os.path.join(tmp, "s.wav"), clip / (np.max(np.abs(clip)) + 1e-9) * 0.9)
@@ -214,7 +286,7 @@ def make_samples(speed):
                 print(f"  ✓ {os.path.relpath(path, PROJECT)}   ({desc})")
             except Exception as e:  # eine fehlende Stimme soll die anderen nicht blockieren
                 print(f"  ✗ {voice}: {e}")
-    print("→ Anhören, Favorit wählen, dann z. B.: python3 tools/make_voice.py --engine edge --voice <Name> --render")
+    print(f"→ Anhören, Favorit wählen, dann: python3 tools/make_voice.py --engine {which} --voice <Name> --render")
 
 
 def write_script(vo):
@@ -278,7 +350,7 @@ def build_voice(engine, vo, duration):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--engine", choices=["edge", "piper", "files", "espeak"], default="edge")
+    ap.add_argument("--engine", choices=["edge", "google", "piper", "files", "espeak"], default="edge")
     ap.add_argument("--voice", help="Stimme (Standard: de-DE-ConradNeural bzw. de_DE-thorsten-high)")
     ap.add_argument("--speed", type=float, help="Sprechtempo (Standard: 1.1 bei edge, 1.12 bei piper)")
     ap.add_argument("--samples", action="store_true", help="Hörproben mehrerer Stimmen nach samples/ schreiben")
@@ -298,11 +370,13 @@ def main():
         write_script(vo)
         return
     if args.samples:
-        make_samples(args.speed)
+        make_samples(args.speed, args.engine)
         return
 
     if args.engine == "edge":
         engine = EdgeEngine(args.voice or "de-DE-ConradNeural", args.speed or 1.1)
+    elif args.engine == "google":
+        engine = GoogleEngine(args.voice or "de-DE-Chirp3-HD-Charon", args.speed or 1.1)
     elif args.engine == "piper":
         engine = PiperEngine(args.voice or "de_DE-thorsten-high", args.speed or 1.12)
     elif args.engine == "espeak":

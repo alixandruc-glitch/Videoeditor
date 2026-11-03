@@ -103,6 +103,7 @@ Windows: in `package.json` `python3` durch `python` ersetzen.
 | Option | Wirkung |
 |---|---|
 | `--engine edge` (Standard) | Microsoft-Neural-Stimmen über `edge-tts` – kostenlos, ohne API-Key, braucht Internet |
+| `--engine google` | Google Cloud Text-to-Speech, Stimme `de-DE-Chirp3-HD-Charon` (Conrad-ähnlich); Schlüssel in `GOOGLE_TTS_API_KEY`. Stimmproben: `--samples --engine google` |
 | `--engine piper` | offline (Thorsten u. a.), lädt das Modell einmalig nach `tools/models/` (~110 MB) |
 | `--engine files` | **eigene Aufnahmen**: `assets/voice-lines/01.m4a`, `02.m4a`, … (eine Datei pro Zeile aus `voiceover.txt`) |
 | `--speed 1.15` | schneller sprechen (Standard 1.1 bei edge, 1.12 bei piper) |

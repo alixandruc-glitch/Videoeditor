@@ -15,7 +15,9 @@
     "short:preview": "cd hyperframes/short-andere-denken && hyperframes preview",
     "short:render": "cd hyperframes/short-andere-denken && hyperframes render -o renders/niemand-denkt-an-dich.mp4",
     "short:voice": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --render",
-    "short:voice-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --samples"
+    "short:voice-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --samples",
+    "short:voice-google": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --engine google --render",
+    "short:voice-google-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --engine google --samples"
   },
   "dependencies": {
     "@hyperframes/core": "^0.9.8",
