@@ -83,8 +83,8 @@ Schreibt dieselbe Testpassage in mehreren Stimmen nach `hyperframes/short-andere
 
 | Datei | Stimme | Charakter |
 |---|---|---|
-| `1-de-DE-FlorianMultilingualNeural.mp3` | Florian | männlich, warm, ausdrucksstark – **Empfehlung** |
-| `2-de-DE-ConradNeural.mp3` | Conrad | männlich, tief, souverän |
+| `1-de-DE-ConradNeural.mp3` | Conrad | männlich, tief, souverän – **gewählt (Standard)** |
+| `2-de-DE-FlorianMultilingualNeural.mp3` | Florian | männlich, warm, ausdrucksstark |
 | `3-de-DE-KillianNeural.mp3` | Killian | männlich, jung, locker |
 | `4-de-DE-SeraphinaMultilingualNeural.mp3` | Seraphina | weiblich, warm, natürlich |
 | `5-de-DE-KatjaNeural.mp3` | Katja | weiblich, klar, sachlich |
@@ -93,9 +93,9 @@ Schreibt dieselbe Testpassage in mehreren Stimmen nach `hyperframes/short-andere
 ### 2. Video mit Stimme rendern
 
 ```bash
-npm run short:voice              # Standard: Florian
+npm run short:voice              # Standard: Conrad
 # andere Stimme / Tempo (im Ordner hyperframes/short-andere-denken):
-python3 tools/make_voice.py --voice de-DE-ConradNeural --speed 1.12 --render
+python3 tools/make_voice.py --voice de-DE-FlorianMultilingualNeural --speed 1.12 --render
 ```
 
 Windows: in `package.json` `python3` durch `python` ersetzen.
@@ -105,7 +105,7 @@ Windows: in `package.json` `python3` durch `python` ersetzen.
 | `--engine edge` (Standard) | Microsoft-Neural-Stimmen über `edge-tts` – kostenlos, ohne API-Key, braucht Internet |
 | `--engine piper` | offline (Thorsten u. a.), lädt das Modell einmalig nach `tools/models/` (~110 MB) |
 | `--engine files` | **eigene Aufnahmen**: `assets/voice-lines/01.m4a`, `02.m4a`, … (eine Datei pro Zeile aus `voiceover.txt`) |
-| `--speed 1.15` | schneller sprechen (Standard 1.08 bei edge, 1.12 bei piper) |
+| `--speed 1.15` | schneller sprechen (Standard 1.1 bei edge, 1.12 bei piper) |
 | ohne `--render` | nur Tonspur erzeugen, z. B. zum Anhören von `assets/soundtrack.mp3` |
 
 Die Ausgabe zeigt für jede Zeile, wo sie liegt und ob sie beschleunigt werden musste.

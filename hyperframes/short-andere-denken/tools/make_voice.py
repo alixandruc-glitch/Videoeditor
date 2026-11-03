@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sprecherstimme für das Short erzeugen, einpassen, mischen und (optional) rendern.
 
-Standard (empfohlen) – Microsoft-Neural-Stimme "Florian" über edge-tts (kostenlos, ohne Key):
+Standard (empfohlen) – Microsoft-Neural-Stimme "Conrad" über edge-tts (kostenlos, ohne Key):
 
     python3 tools/make_voice.py --render
 
@@ -18,8 +18,8 @@ Was passiert:
   4. mit --render: rendert renders/niemand-denkt-an-dich.mp4
 
 Engines und Stimmen:
-    --engine edge  (Standard)   --voice de-DE-FlorianMultilingualNeural (Standard),
-                                de-DE-ConradNeural, de-DE-KillianNeural,
+    --engine edge  (Standard)   --voice de-DE-ConradNeural (Standard),
+                                de-DE-FlorianMultilingualNeural, de-DE-KillianNeural,
                                 de-DE-SeraphinaMultilingualNeural, de-DE-KatjaNeural, …
     --engine piper              offline; --voice de_DE-thorsten-high (Standard),
                                 de_DE-thorsten_emotional-medium, de_DE-kerstin-low, …
@@ -187,8 +187,8 @@ class FilesEngine:
 # ---------------------------------------------------------------- Ablauf
 # Kandidaten für --samples: (Engine, Stimme, Beschreibung)
 CANDIDATES = [
-    ("edge", "de-DE-FlorianMultilingualNeural", "männlich, warm, ausdrucksstark – Empfehlung"),
-    ("edge", "de-DE-ConradNeural", "männlich, tief, souverän"),
+    ("edge", "de-DE-ConradNeural", "männlich, tief, souverän – gewählt"),
+    ("edge", "de-DE-FlorianMultilingualNeural", "männlich, warm, ausdrucksstark"),
     ("edge", "de-DE-KillianNeural", "männlich, jung, locker"),
     ("edge", "de-DE-SeraphinaMultilingualNeural", "weiblich, warm, natürlich"),
     ("edge", "de-DE-KatjaNeural", "weiblich, klar, sachlich"),
@@ -279,8 +279,8 @@ def build_voice(engine, vo, duration):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--engine", choices=["edge", "piper", "files", "espeak"], default="edge")
-    ap.add_argument("--voice", help="Stimme (Standard: de-DE-FlorianMultilingualNeural bzw. de_DE-thorsten-high)")
-    ap.add_argument("--speed", type=float, help="Sprechtempo (Standard: 1.08 bei edge, 1.12 bei piper)")
+    ap.add_argument("--voice", help="Stimme (Standard: de-DE-ConradNeural bzw. de_DE-thorsten-high)")
+    ap.add_argument("--speed", type=float, help="Sprechtempo (Standard: 1.1 bei edge, 1.12 bei piper)")
     ap.add_argument("--samples", action="store_true", help="Hörproben mehrerer Stimmen nach samples/ schreiben")
     ap.add_argument("--render", action="store_true", help="danach das MP4 rendern")
     ap.add_argument("--write-script", action="store_true", help="nur voiceover.txt schreiben")
@@ -302,7 +302,7 @@ def main():
         return
 
     if args.engine == "edge":
-        engine = EdgeEngine(args.voice or "de-DE-FlorianMultilingualNeural", args.speed or 1.08)
+        engine = EdgeEngine(args.voice or "de-DE-ConradNeural", args.speed or 1.1)
     elif args.engine == "piper":
         engine = PiperEngine(args.voice or "de_DE-thorsten-high", args.speed or 1.12)
     elif args.engine == "espeak":
