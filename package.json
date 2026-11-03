@@ -13,7 +13,8 @@
     "hyperframes:preview": "cd hyperframes/beispiel && hyperframes preview",
     "hyperframes:render": "cd hyperframes/beispiel && hyperframes render -o renders/beispiel.mp4",
     "short:preview": "cd hyperframes/short-andere-denken && hyperframes preview",
-    "short:render": "cd hyperframes/short-andere-denken && hyperframes render -o renders/niemand-denkt-an-dich.mp4"
+    "short:render": "cd hyperframes/short-andere-denken && hyperframes render -o renders/niemand-denkt-an-dich.mp4",
+    "short:voice": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --render"
   },
   "dependencies": {
     "@hyperframes/core": "^0.9.8",

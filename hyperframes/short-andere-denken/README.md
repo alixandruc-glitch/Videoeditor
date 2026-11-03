@@ -67,6 +67,39 @@ automatisch ins MP4. Vorschau mit Zeitleiste: `npx hyperframes preview`.
 **Ohne HyperFrames:** `index.html` im Browser öffnen, F für Vollbild, mit OBS Studio
 aufnehmen und auf 1080 × 1920 zuschneiden. Der HyperFrames-Render ist aber deutlich sauberer.
 
+## Sprecherstimme hinzufügen
+
+Der komplette Sprechertext liegt mit Zeitmarken in `index.html` (`window.__vo`) und als
+Aufnahmeliste in `voiceover.txt`. Ein Befehl erzeugt die Stimme, passt jede Zeile in ihr
+Zeitfenster ein, senkt die Musik darunter automatisch ab und rendert das Video:
+
+```bash
+# im Hauptverzeichnis des Repos (Windows: "python" statt "python3" in package.json)
+npm run short:voice
+```
+
+Das entspricht `python3 tools/make_voice.py --render` in diesem Ordner. Beim ersten Lauf
+werden `piper-tts` (pip) und die deutsche Stimme **Thorsten** (~110 MB, nach `tools/models/`)
+heruntergeladen. Alles läuft lokal und kostenlos.
+
+Optionen:
+
+| Option | Wirkung |
+|---|---|
+| `--voice de_DE-thorsten-medium` | andere Stimme (auch `de_DE-thorsten_emotional-medium`, `de_DE-kerstin-low`, `de_DE-ramona-low`, `de_DE-eva_k-x_low`) |
+| `--speed 1.2` | schneller sprechen (Standard 1.12) |
+| `--engine files` | **eigene Aufnahmen** verwenden: `assets/voice-lines/01.m4a`, `02.m4a`, … (eine Datei pro Zeile aus `voiceover.txt`, Format egal) |
+| ohne `--render` | nur Tonspur erzeugen, z. B. zum Anhören von `assets/soundtrack.mp3` |
+
+Die Ausgabe zeigt für jede Zeile, wo sie liegt und ob sie beschleunigt werden musste:
+
+```
+  05  9.04s  1.70s  ×1.12  Psychologen nennen das den Spottlait-Effekt.
+```
+
+Klingt ein Wort falsch, schreib es in `window.__vo` lautschriftlich um (wie „Spottlait“ oder
+„Tie-Schört“) und exportiere die Liste neu: `node tools/export-sfx.cjs` (braucht `npm i -D playwright`).
+
 ## Anpassen
 
 - **Untertitel:** Liste `CUES` im Script – `[start, ende, "Chunk 1 / Chunk 2 mit *Gold-Wort*"]`.
@@ -85,7 +118,5 @@ aufnehmen und auf 1080 × 1920 zuschneiden. Der HyperFrames-Render ist aber deut
 
   Die komplette Tonspur (Bass-Hits, Whooshes, Ticks, Herzschlag, Beat, Pad, Riser) wird
   synthetisch erzeugt – keine fremden Samples, keine Lizenzprobleme.
-- **Eigene Musik / Sprecherstimme:** einfach `assets/soundtrack.mp3` ersetzen oder ein weiteres
-  `<audio id="voice" src="assets/voice.mp3" data-start="0" data-volume="1">` in `#root` einfügen.
-  Für maximale Reichweite: echte Voiceover-Stimme drüberlegen – die Untertitel-Timings
-  in `CUES` sind schon auf einen Sprecher ausgelegt.
+- **Eigene Musik:** `bed()` in `tools/make_soundtrack.py` anpassen oder `assets/soundtrack.mp3`
+  direkt ersetzen (dann aber nicht mehr `make_soundtrack.py` laufen lassen).

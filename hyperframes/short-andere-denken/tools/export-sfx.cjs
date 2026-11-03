@@ -1,4 +1,4 @@
-// Liest die Sound-Effekt-Zeitpunkte (window.__sfx) aus index.html und schreibt assets/sfx.json.
+// Liest Sound-Effekt-Zeitpunkte (window.__sfx) und Sprechertext (window.__vo) aus index.html → assets/sfx.json.
 // Aufruf: node tools/export-sfx.cjs   (benötigt das npm-Paket "playwright")
 const path = require("path");
 const fs = require("fs");
@@ -14,8 +14,9 @@ const { chromium } = require("playwright");
   const data = await page.evaluate(() => ({
     duration: +document.getElementById("root").dataset.duration,
     sfx: window.__sfx,
+    vo: window.__vo,
   }));
   await browser.close();
   fs.writeFileSync(path.join(dir, "assets", "sfx.json"), JSON.stringify(data, null, 1));
-  console.log(`${data.sfx.length} Sound-Effekte, Dauer ${data.duration}s → assets/sfx.json`);
+  console.log(`${data.sfx.length} Sound-Effekte, ${data.vo.length} Sprecherzeilen, Dauer ${data.duration}s → assets/sfx.json`);
 })();

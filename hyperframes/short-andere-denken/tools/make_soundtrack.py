@@ -4,6 +4,9 @@
 Aufruf:  python3 tools/make_soundtrack.py
 Ergebnis: assets/soundtrack.mp3  (benötigt numpy und ffmpeg)
 
+Liegt assets/voice.wav vor (erzeugt von tools/make_voice.py), wird die Sprecherstimme
+eingemischt und die Musik darunter automatisch abgesenkt.
+
 Alles wird hier berechnet – keine fremden Audiodateien, keine Lizenzfragen.
 """
 import json
@@ -76,7 +79,7 @@ def whoosh(d=0.55):
     cutoff = 300 + 5200 * np.sin(np.pi * p) ** 2
     n = lowpass(rng.standard_normal(len(t)), cutoff)
     n = n - lowpass(n, 180)
-    return n * env * 2.2
+    return n * env * 1.1
 
 
 def tick():
@@ -90,7 +93,7 @@ def glitch():
     freqs = np.array([220, 880, 330, 660, 1320, 440, 990, 550])[seg % 8]
     sq = np.sign(np.sin(2 * np.pi * np.cumsum(freqs) / SR))
     crushed = np.round(rng.standard_normal(len(t)) * 3) / 3
-    return (0.5 * sq + 0.35 * crushed) * (seg % 3 != 2) * 0.55
+    return lowpass((0.5 * sq + 0.35 * crushed) * (seg % 3 != 2), 5500) * 0.7
 
 
 def heart():
@@ -183,6 +186,21 @@ def bed(duration):
     return out * gain
 
 
+def load_voice(n):
+    """assets/voice.wav (von tools/make_voice.py) laden, falls vorhanden."""
+    path = os.path.join(ASSETS, "voice.wav")
+    if not os.path.exists(path):
+        return None
+    out = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", path, "-f", "f32le", "-ac", "1", "-ar", str(SR), "-"],
+        check=True,
+        capture_output=True,
+    ).stdout
+    v = np.frombuffer(out, dtype=np.float32).astype(np.float64)
+    v = v[:n] if len(v) >= n else np.concatenate([v, np.zeros(n - len(v))])
+    return v / (np.max(np.abs(v)) + 1e-9) * 0.9
+
+
 def main():
     with open(os.path.join(ASSETS, "sfx.json")) as f:
         data = json.load(f)
@@ -194,9 +212,18 @@ def main():
         if name not in cache:
             cache[name] = SFX[name]()
         place(fx, cache[name], t, vol)
-    mix = 0.75 * music + 0.9 * fx
-    mix = np.tanh(mix * 1.1)
-    mix /= np.max(np.abs(mix)) / 0.89
+    voice = load_voice(len(music))
+    if voice is None:
+        mix = 0.75 * music + 0.9 * fx
+    else:
+        # Ducking: Musik (und etwas die Effekte) unter der Stimme absenken
+        env = np.abs(voice)
+        env = lowpass(lowpass(env, 6), 6)
+        env = np.clip(env / (np.max(env) * 0.25 + 1e-9), 0, 1)
+        mix = 0.75 * music * (1 - 0.6 * env) + 0.9 * fx * (1 - 0.3 * env) + 1.15 * voice
+        print("→ Sprecherstimme (assets/voice.wav) eingemischt")
+    mix = np.tanh(mix * 0.9)
+    mix /= np.max(np.abs(mix)) / 0.75
 
     # leichte Stereo-Breite
     delay = int(0.012 * SR)
