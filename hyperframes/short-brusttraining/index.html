@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Was passiert im Brustmuskel? – YouTube Short</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg: #050608;
+        --ink: #f6f3ec;
+        --muted: #8f8b83;
+        --gold: #d4a94f;
+        --gold-soft: #f0d590;
+        --muscle: #b8433a;
+        --muscle-dark: #5e1a17;
+        --meta: #7fd6c8;
+        --serif: "Playfair Display", Georgia, serif;
+        --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+        --punch: "Archivo Black", "Arial Black", sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: var(--sans);
+        color: var(--ink);
+      }
+
+      /* ---------- Bewegter Hintergrund ---------- */
+      #bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(110px);
+      }
+      #blob-1 {
+        width: 900px;
+        height: 900px;
+        left: -300px;
+        top: 80px;
+        background: rgba(212, 169, 79, 0.18);
+      }
+      #blob-2 {
+        width: 1000px;
+        height: 1000px;
+        left: 380px;
+        top: 950px;
+        background: rgba(48, 70, 120, 0.26);
+      }
+      #blob-3 {
+        width: 700px;
+        height: 700px;
+        left: 380px;
+        top: 300px;
+        background: rgba(150, 50, 40, 0.18);
+      }
+      .mote {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--gold-soft);
+      }
+      #grain {
+        position: absolute;
+        left: -120px;
+        top: -120px;
+        width: 1320px;
+        height: 2160px;
+        opacity: 0.1;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 42%, transparent 30%, rgba(0, 0, 0, 0.82) 100%);
+      }
+
+      /* ---------- Kamera & Szenen ---------- */
+      #cam {
+        position: absolute;
+        inset: 0;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        visibility: hidden;
+      }
+      .in {
+        opacity: 0;
+      }
+      .center {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        text-align: center;
+      }
+      .mega {
+        font-family: var(--punch);
+        text-transform: uppercase;
+        line-height: 0.95;
+        color: var(--ink);
+        text-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      }
+      .gold {
+        color: var(--gold-soft);
+      }
+      .glow {
+        text-shadow: 0 0 40px rgba(240, 213, 144, 0.45), 0 10px 40px rgba(0, 0, 0, 0.7);
+      }
+      .kicker {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+      .stamp {
+        position: absolute;
+        left: 60px;
+        right: 60px;
+        text-align: center;
+      }
+      .stamp-name {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 10px 34px 16px;
+        border: 4px solid var(--gold);
+        border-radius: 14px;
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 74px;
+        line-height: 1.05;
+        color: var(--ink);
+        background: rgba(5, 6, 8, 0.6);
+        box-shadow: 0 0 60px rgba(212, 169, 79, 0.25);
+      }
+      .stamp-src {
+        margin-top: 14px;
+        font-size: 28px;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      .chip {
+        position: absolute;
+        padding: 14px 28px;
+        border-radius: 40px;
+        font-family: var(--punch);
+        font-size: 34px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        background: rgba(5, 6, 8, 0.7);
+        white-space: nowrap;
+      }
+
+      /* 1 · Hook */
+      #h-small {
+        top: 640px;
+        font-size: 96px;
+      }
+      #h-big {
+        top: 750px;
+        font-size: 190px;
+      }
+
+      /* 2+3 · Anatomie */
+      #torso {
+        position: absolute;
+        left: 90px;
+        top: 470px;
+        width: 900px;
+        height: 788px;
+        overflow: visible;
+      }
+      #scanline {
+        position: absolute;
+        left: 60px;
+        right: 60px;
+        top: 470px;
+        height: 6px;
+        background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+        box-shadow: 0 0 40px 10px rgba(240, 213, 144, 0.35);
+      }
+      #s2-q {
+        top: 240px;
+        font-size: 64px;
+        line-height: 1.05;
+      }
+      #s2-qmark {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 560px;
+        text-align: center;
+        font-family: var(--punch);
+        font-size: 420px;
+        line-height: 1;
+        color: var(--gold-soft);
+        text-shadow: 0 0 60px rgba(240, 213, 144, 0.5);
+      }
+      #pec-label {
+        position: absolute;
+        left: 560px;
+        top: 455px;
+        width: 420px;
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+      }
+      #pec-label i {
+        display: block;
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: 28px;
+        color: var(--gold-soft);
+      }
+      #chip-mech {
+        left: 70px;
+        top: 290px;
+        color: var(--gold-soft);
+        border: 3px solid var(--gold);
+      }
+      #chip-meta {
+        right: 70px;
+        top: 290px;
+        color: var(--meta);
+        border: 3px solid var(--meta);
+      }
+      #s3-stamp {
+        top: 230px;
+      }
+      #tension-meter {
+        position: absolute;
+        left: 240px;
+        right: 240px;
+        top: 1278px;
+        height: 18px;
+        border-radius: 9px;
+        background: rgba(246, 243, 236, 0.1);
+        overflow: hidden;
+      }
+      #tension-fill {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, #a07a32, var(--gold-soft));
+        transform-origin: 0 50%;
+      }
+
+      /* 4 · Im Muskel */
+      #crumbs {
+        top: 250px;
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+      #crumbs span {
+        display: inline-block;
+      }
+      #crumbs .sep {
+        margin: 0 10px;
+        color: var(--gold);
+      }
+      #s4-title {
+        top: 330px;
+        font-family: var(--serif);
+        font-weight: 700;
+        font-size: 84px;
+      }
+      #sarc {
+        position: absolute;
+        left: 90px;
+        top: 600px;
+        width: 900px;
+        height: 380px;
+        overflow: visible;
+      }
+      .s4-chip {
+        top: 1060px;
+      }
+      #chip-signal {
+        left: 90px;
+        color: var(--meta);
+        border: 3px solid var(--meta);
+      }
+      #chip-protein {
+        right: 90px;
+        color: var(--gold-soft);
+        border: 3px solid var(--gold);
+      }
+      #xsec {
+        position: absolute;
+        left: 290px;
+        top: 560px;
+        width: 500px;
+        height: 500px;
+        overflow: visible;
+      }
+      #s4-stamp {
+        top: 230px;
+      }
+      #timeline {
+        position: absolute;
+        left: 170px;
+        right: 170px;
+        top: 1130px;
+      }
+      #timeline-track {
+        height: 10px;
+        border-radius: 5px;
+        background: rgba(246, 243, 236, 0.12);
+        overflow: hidden;
+      }
+      #timeline-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #a07a32, var(--gold-soft));
+        transform-origin: 0 50%;
+      }
+      #timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 14px;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* 5 · Wiederholungen */
+      #s5-label {
+        top: 330px;
+        font-size: 40px;
+        font-weight: 800;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+      }
+      #s5-num {
+        top: 420px;
+        font-family: var(--punch);
+        font-size: 330px;
+        line-height: 1;
+      }
+      #s5-strike {
+        position: absolute;
+        left: 150px;
+        top: 590px;
+        width: 780px;
+        height: 22px;
+        border-radius: 11px;
+        background: var(--muscle);
+        box-shadow: 0 0 30px rgba(184, 67, 58, 0.7);
+        transform-origin: 0 50%;
+      }
+      #s5-dumbbell {
+        position: absolute;
+        left: 390px;
+        top: 840px;
+        width: 300px;
+        height: 120px;
+      }
+      #s5-verdict {
+        top: 1030px;
+        font-size: 120px;
+      }
+
+      /* 6 · Progressive Overload */
+      #s6-stamp {
+        top: 230px;
+      }
+      #chart {
+        position: absolute;
+        left: 110px;
+        top: 560px;
+        width: 860px;
+        height: 620px;
+        overflow: visible;
+      }
+      .bar {
+        transform-box: fill-box;
+        transform-origin: 50% 100%;
+      }
+
+      /* 7 · Abschluss */
+      #s7-a {
+        top: 470px;
+        font-size: 128px;
+      }
+      #s7-b {
+        top: 740px;
+        font-size: 128px;
+      }
+      #s7-line {
+        position: absolute;
+        left: 390px;
+        top: 1010px;
+        width: 300px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      }
+      #s7-cta {
+        top: 1080px;
+      }
+      #s7-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 18px;
+        padding: 22px 38px;
+        border-radius: 60px;
+        background: var(--gold-soft);
+        color: #0a0a0a;
+        font-size: 40px;
+        font-weight: 800;
+      }
+      #s7-follow {
+        margin-top: 26px;
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      /* ---------- Untertitel ---------- */
+      #captions {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        top: 1370px;
+        height: 240px;
+      }
+      .chunk {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        text-align: center;
+        font-family: var(--punch);
+        font-size: 70px;
+        line-height: 1.1;
+        text-transform: uppercase;
+        color: var(--ink);
+        text-shadow: 0 0 2px #000, 0 6px 0 rgba(0, 0, 0, 0.55), 0 10px 30px rgba(0, 0, 0, 0.8);
+        visibility: hidden;
+      }
+      .w {
+        display: inline-block;
+        margin: 0 0.1em;
+      }
+      .w.gold {
+        color: var(--gold-soft);
+      }
+
+      /* ---------- Overlays ---------- */
+      #progress {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 10px;
+        background: linear-gradient(90deg, #a07a32, var(--gold-soft));
+        transform-origin: 0 50%;
+      }
+      #leak {
+        position: absolute;
+        left: -700px;
+        top: -200px;
+        width: 700px;
+        height: 2400px;
+        background: linear-gradient(90deg, transparent, rgba(240, 213, 144, 0.35), rgba(255, 255, 255, 0.25), rgba(240, 213, 144, 0.35), transparent);
+        transform: rotate(14deg);
+        opacity: 0;
+      }
+      #glitch {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        background: repeating-linear-gradient(0deg, rgba(240, 213, 144, 0.18) 0 6px, transparent 6px 22px, rgba(80, 120, 200, 0.14) 22px 26px, transparent 26px 60px);
+      }
+      #flash {
+        position: absolute;
+        inset: 0;
+        background: #f3dfae;
+        opacity: 0;
+      }
+
+      /* ---------- Nur beim direkten Öffnen im Browser ---------- */
+      #player-ui,
+      #player-start {
+        display: none;
+      }
+      html.standalone,
+      html.standalone body {
+        width: 100%;
+        height: 100%;
+        background: #000;
+      }
+      html.standalone #root {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+      }
+      html.standalone #player-ui {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 10px 16px 14px;
+        font: 13px/1.4 system-ui, sans-serif;
+        color: #bbb;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+        z-index: 10;
+      }
+      #player-bar {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+      #player-progress {
+        height: 100%;
+        width: 0;
+        background: #d4a94f;
+      }
+      html.standalone #player-start {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 16px;
+        background: rgba(0, 0, 0, 0.6);
+        color: #f0d590;
+        font: 600 20px system-ui, sans-serif;
+        cursor: pointer;
+      }
+      #player-start b {
+        display: flex;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        background: #f0d590;
+        color: #000;
+        font-size: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="38"
+      data-width="1080"
+      data-height="1920"
+    >
+      <audio id="soundtrack" src="assets/soundtrack.mp3" data-start="0" data-volume="1" preload="auto"></audio>
+
+      <div id="bg">
+        <div id="blob-1" class="blob"></div>
+        <div id="blob-2" class="blob"></div>
+        <div id="blob-3" class="blob"></div>
+        <div id="dust"></div>
+        <div id="grain"></div>
+        <div id="vignette"></div>
+      </div>
+
+      <div id="cam">
+        <!-- 1 · Hook (0 – 2 s) -->
+        <section id="s1" class="scene">
+          <div id="h-small" class="center mega">Du trainierst</div>
+          <div id="h-big" class="center mega gold glow">deine<br />Brust.</div>
+        </section>
+
+        <!-- 2+3 · Anatomie (2 – 14.9 s) -->
+        <section id="s2" class="scene">
+          <div id="s2-q" class="center mega in">Was passiert<br /><span class="gold">im Muskel?</span></div>
+          <svg id="torso" viewBox="0 0 800 700">
+            <defs>
+              <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#232733" />
+                <stop offset="1" stop-color="#12141a" />
+              </linearGradient>
+              <radialGradient id="muscle-grad" cx="0.7" cy="0.45" r="0.8">
+                <stop offset="0" stop-color="#cf5446" />
+                <stop offset="0.6" stop-color="#9c342c" />
+                <stop offset="1" stop-color="#5e1a17" />
+              </radialGradient>
+              <clipPath id="pec-clip">
+                <path d="M222 140 Q300 124 392 146 L400 260 L398 398 Q330 436 250 392 Q205 340 190 292 L184 236 Z" />
+              </clipPath>
+            </defs>
+            <!-- Körper -->
+            <path
+              id="body"
+              d="M335 0 L465 0 L470 80 Q560 100 650 140 Q715 165 725 230 L735 520 Q735 560 700 560 L690 560 L660 330 Q640 420 610 470 L590 700 L210 700 L190 470 Q160 420 140 330 L110 560 L100 560 Q65 560 65 520 L75 230 Q85 165 150 140 Q240 100 330 80 Z"
+              fill="url(#skin)"
+              stroke="rgba(240,213,144,0.25)"
+              stroke-width="2"
+            />
+            <!-- Bauch-Andeutung -->
+            <g stroke="rgba(246,243,236,0.08)" stroke-width="3" fill="none">
+              <line x1="400" y1="430" x2="400" y2="690" />
+              <path d="M300 470 Q350 480 400 470 Q450 480 500 470" />
+              <path d="M295 540 Q350 550 400 540 Q450 550 505 540" />
+              <path d="M290 610 Q350 620 400 610 Q450 620 510 610" />
+            </g>
+            <!-- Deltamuskeln -->
+            <path class="delt" d="M150 140 Q90 165 78 240 L92 300 Q130 250 184 236 L222 140 Q185 128 150 140 Z" fill="#4a1714" stroke="rgba(240,213,144,0.2)" stroke-width="2" />
+            <path class="delt" d="M650 140 Q710 165 722 240 L708 300 Q670 250 616 236 L578 140 Q615 128 650 140 Z" fill="#4a1714" stroke="rgba(240,213,144,0.2)" stroke-width="2" />
+            <!-- Brustmuskel links + rechts (rechte Seite gespiegelt) -->
+            <g id="pec-l">
+              <g class="pec-shape">
+                <path d="M222 140 Q300 124 392 146 L400 260 L398 398 Q330 436 250 392 Q205 340 190 292 L184 236 Z" fill="url(#muscle-grad)" stroke="#d4a94f" stroke-width="3" />
+                <g class="fibers" clip-path="url(#pec-clip)"></g>
+                <g class="bubbles" clip-path="url(#pec-clip)"></g>
+              </g>
+            </g>
+            <g id="pec-r">
+              <g transform="translate(800 0) scale(-1 1)">
+                <g class="pec-shape">
+                  <path d="M222 140 Q300 124 392 146 L400 260 L398 398 Q330 436 250 392 Q205 340 190 292 L184 236 Z" fill="url(#muscle-grad)" stroke="#d4a94f" stroke-width="3" />
+                  <g class="fibers" clip-path="url(#pec-clip)"></g>
+                  <g class="bubbles" clip-path="url(#pec-clip)"></g>
+                </g>
+              </g>
+            </g>
+            <!-- Schlüsselbeine + Brustbein -->
+            <g stroke="#e9e2d0" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.85">
+              <path d="M392 140 Q300 112 200 122" />
+              <path d="M408 140 Q500 112 600 122" />
+              <line x1="400" y1="138" x2="400" y2="402" stroke-width="12" />
+            </g>
+            <!-- Spannungspfeile entlang der Fasern -->
+            <g id="arrows" fill="none" stroke="#f0d590" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+              <g class="arrow-l"><path d="M370 300 L230 262" /><path d="M252 246 L226 261 L246 282" /></g>
+              <g class="arrow-r"><path d="M430 300 L570 262" /><path d="M548 246 L574 261 L554 282" /></g>
+            </g>
+            <!-- Leitlinie zum Label -->
+            <path id="pec-leader" d="M520 250 L600 160 L700 160" fill="none" stroke="#d4a94f" stroke-width="3" />
+            <circle id="pec-dot" cx="520" cy="250" r="9" fill="#f0d590" />
+          </svg>
+          <div id="pec-label" class="in">Großer Brustmuskel<i>M. pectoralis major</i></div>
+          <div id="scanline" class="in"></div>
+          <div id="s2-qmark" class="in">?</div>
+          <div id="chip-mech" class="chip in">⇄ Mechanisch</div>
+          <div id="chip-meta" class="chip in">● Metabolisch</div>
+          <div id="s3-stamp" class="stamp in">
+            <div class="kicker">Wichtigster Reiz</div>
+            <div class="stamp-name">Mechanische Spannung</div>
+          </div>
+          <div id="tension-meter" class="in"><div id="tension-fill"></div></div>
+        </section>
+
+        <!-- 4 · Im Muskel (14.9 – 22.2 s) -->
+        <section id="s4" class="scene">
+          <div id="crumbs" class="center in">
+            <span class="crumb">Muskel</span><span class="sep">›</span><span class="crumb">Faser</span><span class="sep">›</span><span class="crumb">Myofibrille</span><span class="sep">›</span><span class="crumb">Sarkomer</span>
+          </div>
+          <div id="s4-title" class="center in">Das Sarkomer</div>
+          <svg id="sarc" class="in" viewBox="0 0 900 380">
+            <g id="z-left" stroke="#d4a94f" stroke-width="8" fill="none" stroke-linejoin="round">
+              <polyline points="60,30 80,70 60,110 80,150 60,190 80,230 60,270 80,310 60,350" />
+            </g>
+            <g id="z-right" stroke="#d4a94f" stroke-width="8" fill="none" stroke-linejoin="round">
+              <polyline points="840,30 820,70 840,110 820,150 840,190 820,230 840,270 820,310 840,350" />
+            </g>
+            <g id="actin-l" stroke="#f0d590" stroke-width="5" stroke-linecap="round">
+              <line x1="70" y1="70" x2="370" y2="70" /><line x1="70" y1="130" x2="370" y2="130" /><line x1="70" y1="190" x2="370" y2="190" /><line x1="70" y1="250" x2="370" y2="250" /><line x1="70" y1="310" x2="370" y2="310" />
+            </g>
+            <g id="actin-r" stroke="#f0d590" stroke-width="5" stroke-linecap="round">
+              <line x1="530" y1="70" x2="830" y2="70" /><line x1="530" y1="130" x2="830" y2="130" /><line x1="530" y1="190" x2="830" y2="190" /><line x1="530" y1="250" x2="830" y2="250" /><line x1="530" y1="310" x2="830" y2="310" />
+            </g>
+            <g id="myosin" fill="#f6f3ec"></g>
+            <line x1="450" y1="40" x2="450" y2="340" stroke="rgba(246,243,236,0.35)" stroke-width="3" stroke-dasharray="8 8" />
+            <g id="new-row" class="in">
+              <line x1="70" y1="370" x2="370" y2="370" stroke="#f0d590" stroke-width="5" stroke-linecap="round" />
+              <line x1="530" y1="370" x2="830" y2="370" stroke="#f0d590" stroke-width="5" stroke-linecap="round" />
+              <rect x="250" y="358" width="400" height="24" rx="12" fill="#7fd6c8" />
+            </g>
+            <g id="load-arrows" fill="none" stroke="#b8433a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+              <g id="load-l"><path d="M40 190 L-60 190" /><path d="M-38 168 L-62 190 L-38 212" /></g>
+              <g id="load-r"><path d="M860 190 L960 190" /><path d="M938 168 L962 190 L938 212" /></g>
+            </g>
+          </svg>
+          <div id="chip-signal" class="chip s4-chip in">⚡ Signale</div>
+          <div id="chip-protein" class="chip s4-chip in">Proteinsynthese ↑</div>
+
+          <svg id="xsec" class="in" viewBox="-250 -250 500 500">
+            <circle id="xsec-outline" r="235" fill="rgba(94,26,23,0.35)" stroke="#d4a94f" stroke-width="5" />
+            <g id="xsec-fibers"></g>
+          </svg>
+          <div id="s4-stamp" class="stamp in">
+            <div class="kicker">Muskelwachstum</div>
+            <div class="stamp-name">Hypertrophie</div>
+          </div>
+          <div id="timeline" class="in">
+            <div id="timeline-track"><div id="timeline-fill"></div></div>
+            <div id="timeline-labels"><span>Wochen</span><span>Monate</span></div>
+          </div>
+        </section>
+
+        <!-- 5 · Wiederholungen (22.2 – 27.9 s) -->
+        <section id="s5" class="scene">
+          <div id="s5-label" class="center in">WIEDERHOLUNGEN</div>
+          <div id="s5-num" class="center in">0</div>
+          <div id="s5-strike" class="in"></div>
+          <svg id="s5-dumbbell" class="in" viewBox="0 0 300 120">
+            <rect x="60" y="52" width="180" height="16" rx="8" fill="#8f8b83" />
+            <rect x="20" y="20" width="34" height="80" rx="10" fill="#d4a94f" />
+            <rect x="246" y="20" width="34" height="80" rx="10" fill="#d4a94f" />
+            <rect x="0" y="34" width="22" height="52" rx="8" fill="#a07a32" />
+            <rect x="278" y="34" width="22" height="52" rx="8" fill="#a07a32" />
+          </svg>
+          <div id="s5-verdict" class="center mega gold glow in">Mehr ≠<br />besser.</div>
+        </section>
+
+        <!-- 6 · Progressive Overload (27.9 – 33 s) -->
+        <section id="s6" class="scene">
+          <div id="s6-stamp" class="stamp in">
+            <div class="kicker">Das Prinzip</div>
+            <div class="stamp-name">Progressive Overload</div>
+            <div class="stamp-src">Trainingsreiz gezielt setzen – und steigern</div>
+          </div>
+          <svg id="chart" viewBox="0 0 860 620">
+            <line x1="40" y1="560" x2="840" y2="560" stroke="rgba(246,243,236,0.35)" stroke-width="3" />
+            <line x1="40" y1="20" x2="40" y2="560" stroke="rgba(246,243,236,0.35)" stroke-width="3" />
+            <text x="50" y="16" fill="#8f8b83" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="3">TRAININGSREIZ</text>
+            <g id="bars"></g>
+            <polyline id="trend" class="in" points="100,470 190,430 280,390 370,340 460,290 550,230 640,170 740,90" fill="none" stroke="#f0d590" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+            <path id="trend-head" class="in" d="M712 82 L748 86 L730 118" fill="none" stroke="#f0d590" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </section>
+
+        <!-- 7 · Abschluss (33 – 38 s) -->
+        <section id="s7" class="scene">
+          <div id="s7-a" class="center mega in">Reiz<br />setzen.</div>
+          <div id="s7-b" class="center mega gold glow in">Reiz<br />steigern.</div>
+          <div id="s7-line" class="in"></div>
+          <div id="s7-cta" class="center in">
+            <div id="s7-pill">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+              Speichern fürs nächste Brusttraining
+            </div>
+            <div id="s7-follow">Folge für mehr Trainingswissen</div>
+          </div>
+        </section>
+      </div>
+
+      <div id="captions"></div>
+      <div id="glitch"></div>
+      <div id="leak"></div>
+      <div id="flash"></div>
+      <div id="progress"></div>
+    </div>
+
+    <div id="player-start"><b>▶</b>Abspielen (mit Ton)</div>
+    <div id="player-ui">
+      <div id="player-bar"><div id="player-progress"></div></div>
+      Klick: Pause / Weiter · R: Neustart · F: Vollbild
+    </div>
+
+    <script>
+      // ==================================================================
+      // Hilfsfunktionen
+      // ==================================================================
+      function rng(seed) {
+        let s = seed >>> 0;
+        return () => {
+          s = (s * 1664525 + 1013904223) >>> 0;
+          return s / 4294967296;
+        };
+      }
+      function el(tag, cls, parent, style) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (style) Object.assign(e.style, style);
+        parent.appendChild(e);
+        return e;
+      }
+      const SVGNS = "http://www.w3.org/2000/svg";
+      function sv(tag, attrs, parent) {
+        const e = document.createElementNS(SVGNS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        parent.appendChild(e);
+        return e;
+      }
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+      const DURATION = 38;
+      window.__sfx = [];
+      const sfx = (name, t, vol = 1) => window.__sfx.push([name, +t.toFixed(3), vol]);
+      // Musik-Struktur für tools/make_soundtrack.py
+      window.__music = {
+        bpm: 112,
+        kick: [[2.0, 22.2], [22.6, 33.0]],
+        hats: [[5.4, 22.0], [22.6, 33.0]],
+        riser: [20.4, 22.2],
+        drop: [22.2, 22.6],
+      };
+
+      // ==================================================================
+      // Dynamische Elemente
+      // ==================================================================
+      const rDust = rng(11);
+      const motes = [];
+      for (let i = 0; i < 44; i++) {
+        const size = 2 + rDust() * 6;
+        motes.push(
+          el("div", "mote", $("#dust"), {
+            left: rDust() * 1080 + "px",
+            top: rDust() * 1920 + "px",
+            width: size + "px",
+            height: size + "px",
+            opacity: (0.15 + rDust() * 0.5).toFixed(2),
+          }),
+        );
+      }
+
+      // Muskelfasern: fächerförmig vom Ursprung (Schlüsselbein, Brustbein) zum Ansatz (Oberarm)
+      const ORIGIN = [
+        [222, 140], [300, 130], [392, 146], [400, 260], [398, 398], [330, 428], [250, 392],
+      ];
+      function along(poly, t) {
+        const seg = [];
+        let total = 0;
+        for (let i = 1; i < poly.length; i++) {
+          const d = Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]);
+          seg.push(d);
+          total += d;
+        }
+        let dist = t * total;
+        for (let i = 0; i < seg.length; i++) {
+          if (dist <= seg[i]) {
+            const f = dist / seg[i];
+            return [poly[i][0] + (poly[i + 1][0] - poly[i][0]) * f, poly[i][1] + (poly[i + 1][1] - poly[i][1]) * f];
+          }
+          dist -= seg[i];
+        }
+        return poly[poly.length - 1];
+      }
+      const FIBERS = 30;
+      $$(".fibers").forEach((g) => {
+        for (let k = 0; k < FIBERS; k++) {
+          const t = k / (FIBERS - 1);
+          const [ox, oy] = along(ORIGIN, t);
+          const ix = 184 + 8 * t;
+          const iy = 236 + 58 * t;
+          const cx = ox * 0.45 + ix * 0.55;
+          const cy = oy * 0.5 + iy * 0.5 + 12;
+          sv("path", { d: `M${ox.toFixed(1)} ${oy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${ix.toFixed(1)} ${iy.toFixed(1)}`, fill: "none", stroke: "rgba(255,214,196,0.42)", "stroke-width": 3, class: "fiber" }, g);
+        }
+      });
+      // Metaboliten-Bläschen
+      const rB = rng(5);
+      $$(".bubbles").forEach((g) => {
+        for (let k = 0; k < 14; k++) {
+          sv("circle", { cx: (230 + rB() * 160).toFixed(1), cy: (200 + rB() * 190).toFixed(1), r: (5 + rB() * 7).toFixed(1), fill: "#7fd6c8", opacity: 0, class: "bubble" }, g);
+        }
+      });
+
+      // Myosin-Filamente mit Köpfchen
+      const myo = $("#myosin");
+      [100, 160, 220, 280].forEach((y) => {
+        sv("rect", { x: 250, y: y - 10, width: 400, height: 20, rx: 10 }, myo);
+        for (let x = 270; x <= 630; x += 30) {
+          if (Math.abs(x - 450) < 25) continue;
+          const dir = x < 450 ? -1 : 1;
+          sv("line", { x1: x, y1: y - 10, x2: x + dir * 12, y2: y - 24, stroke: "#f6f3ec", "stroke-width": 4, "stroke-linecap": "round", class: "head" }, myo);
+          sv("line", { x1: x, y1: y + 10, x2: x + dir * 12, y2: y + 24, stroke: "#f6f3ec", "stroke-width": 4, "stroke-linecap": "round", class: "head" }, myo);
+        }
+      });
+
+      // Faser-Querschnitt (hexagonal gepackt)
+      const xf = $("#xsec-fibers");
+      const xFibers = [];
+      for (let row = -4; row <= 4; row++) {
+        for (let col = -5; col <= 5; col++) {
+          const x = col * 46 + (row % 2 ? 23 : 0);
+          const y = row * 40;
+          if (Math.hypot(x, y) > 200) continue;
+          xFibers.push(sv("circle", { cx: x, cy: y, r: 17, fill: "#b8433a", stroke: "#f0d590", "stroke-width": 2 }, xf));
+        }
+      }
+
+      // Balken für Progressive Overload
+      const bars = [];
+      for (let i = 0; i < 8; i++) {
+        const h = 90 + i * 55;
+        const x = 70 + i * 92;
+        bars.push(sv("rect", { x, y: 560 - h, width: 62, height: h, rx: 8, fill: i === 7 ? "#f0d590" : "rgba(212,169,79," + (0.35 + i * 0.07).toFixed(2) + ")", class: "bar" }, $("#bars")));
+        sv("text", { x: x + 31, y: 600, "text-anchor": "middle", fill: "#8f8b83", "font-family": "Inter, Arial, sans-serif", "font-size": 24, "font-weight": 700 }, $("#bars")).textContent = "W" + (i + 1);
+      }
+
+      // ==================================================================
+      // Sprechertext [start, gesprochener Text] – für tools/make_voice.py
+      // ==================================================================
+      window.__vo = [
+        [0.15, "Du trainierst deine Brust."],
+        [2.0, "Aber weißt du eigentlich, was dabei im Muskel passiert?"],
+        [5.4, "Beim Krafttraining entstehen mechanische und metabolische Reize."],
+        [9.3, "Besonders die mechanische Spannung spielt eine wichtige Rolle bei der Anpassung der Muskulatur."],
+        [14.9, "Dein Körper reagiert auf diese Belastung mit Anpassungsprozessen,"],
+        [19.0, "die langfristig zu Muskelwachstum führen können."],
+        [22.2, "Deshalb geht es beim Muskelaufbau nicht einfach darum, möglichst viele Wiederholungen zu machen."],
+        [27.9, "Entscheidend ist, wie du deinen Trainingsreiz setzt"],
+        [30.9, "und über die Zeit steigerst."],
+      ];
+
+      // Untertitel: "/" trennt Einblendungen, *Wort* = gold
+      const CUES = [
+        [0.15, 2.0, "Du trainierst / deine *Brust.*"],
+        [2.0, 5.3, "Aber weißt du eigentlich, / was dabei / im *Muskel* passiert?"],
+        [5.4, 9.2, "Beim Krafttraining entstehen / *mechanische* und / *metabolische* Reize."],
+        [9.3, 14.8, "Besonders die / *mechanische Spannung* / spielt eine wichtige Rolle / bei der *Anpassung* / der Muskulatur."],
+        [14.9, 18.9, "Dein Körper reagiert / auf diese Belastung / mit *Anpassungsprozessen,*"],
+        [19.0, 22.1, "die langfristig / zu *Muskelwachstum* / führen können."],
+        [22.2, 27.8, "Deshalb geht es beim Muskelaufbau / nicht einfach darum, / möglichst viele / *Wiederholungen* zu machen."],
+        [27.9, 30.8, "Entscheidend ist, / wie du deinen / *Trainingsreiz* setzt"],
+        [30.9, 32.9, "und über die Zeit / *steigerst.*"],
+      ];
+      const chunks = [];
+      CUES.forEach(([start, end, text]) => {
+        const parts = text.split("/").map((p) => p.trim());
+        const weights = parts.map((p) => p.replace(/\*/g, "").length + 6);
+        const total = weights.reduce((a, b) => a + b, 0);
+        let t = start;
+        parts.forEach((part, i) => {
+          const dur = ((end - start) * weights[i]) / total;
+          const node = el("div", "chunk", $("#captions"));
+          const words = [];
+          part.split(/(\*[^*]+\*)/).forEach((seg) => {
+            if (!seg) return;
+            const gold = seg.startsWith("*");
+            seg
+              .replace(/\*/g, "")
+              .split(" ")
+              .filter(Boolean)
+              .forEach((w) => {
+                const s = el("span", "w" + (gold ? " gold" : ""), node);
+                s.textContent = w;
+                words.push(s);
+              });
+          });
+          chunks.push({ node, words, start: t, end: t + dur });
+          t += dur;
+        });
+      });
+
+      // ==================================================================
+      // Timeline
+      // ==================================================================
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const F = (target, from, to, t) => tl.fromTo(target, from, Object.assign({ immediateRender: false }, to), t);
+
+      function shake(t, a = 16) {
+        tl.to("#cam", { keyframes: [{ x: a, y: -a * 0.6, duration: 0.035 }, { x: -a * 0.8, y: a * 0.5, duration: 0.035 }, { x: a * 0.5, y: a * 0.3, duration: 0.035 }, { x: -a * 0.3, y: -a * 0.2, duration: 0.035 }, { x: 0, y: 0, duration: 0.05 }] }, t);
+      }
+      function flash(t, o = 0.3) {
+        F("#flash", { opacity: o }, { opacity: 0, duration: 0.22, ease: "power2.out" }, t);
+      }
+      function impact(t, power = 1) {
+        shake(t, 18 * power);
+        flash(t, 0.28 * power);
+        sfx(power >= 1 ? "boom" : "hit", t, Math.min(1, 0.6 + 0.4 * power));
+      }
+      function glitch(t) {
+        F("#glitch", { opacity: 0, y: 0 }, { keyframes: [{ opacity: 1, y: -30, duration: 0.05 }, { opacity: 0.2, y: 40, duration: 0.05 }, { opacity: 0.9, y: -10, duration: 0.05 }, { opacity: 0, y: 0, duration: 0.08 }] }, t);
+        sfx("glitch", t, 0.7);
+      }
+      function slam(sel, t, power = 1, rot = 0) {
+        F(sel, { opacity: 0, scale: 2.4, rotation: rot * 2 }, { opacity: 1, scale: 1, rotation: rot, duration: 0.16, ease: "power3.in" }, t);
+        impact(t + 0.16, power);
+      }
+      function pop(sel, t, d = 0.35) {
+        F(sel, { opacity: 0, scale: 0.6, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: d, ease: "back.out(2.2)" }, t);
+      }
+      function out(sel, t, d = 0.25) {
+        F(sel, { opacity: 1 }, { opacity: 0, duration: d, ease: "power2.in" }, t);
+      }
+      function whip(outSel, inSel, t) {
+        if (outSel) F(outSel, { autoAlpha: 1, x: 0, filter: "blur(0px)" }, { autoAlpha: 0, x: -900, filter: "blur(28px)", duration: 0.28, ease: "power3.in" }, t - 0.28);
+        F(inSel, { autoAlpha: 0, x: 900, filter: "blur(28px)" }, { autoAlpha: 1, x: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out" }, t);
+        F("#leak", { x: 0, opacity: 0 }, { x: 2400, opacity: 1, duration: 0.7, ease: "power2.inOut" }, t - 0.35);
+        sfx("whoosh", t - 0.3, 0.8);
+      }
+      function zoom(t, d, from = 1, to = 1.06) {
+        F("#cam", { scale: from }, { scale: to, duration: d, ease: "none" }, t);
+      }
+      function counter(node, from, to, t, d, fmt, ticks = 6, ease = "power2.out") {
+        const o = { v: from };
+        F(o, { v: from }, { v: to, duration: d, ease, onUpdate: () => (node.textContent = fmt(Math.round(o.v))) }, t);
+        for (let i = 0; i < ticks; i++) sfx("tick", t + d * (i / ticks) ** 1.4, 0.45);
+      }
+
+      // --- Hintergrund ---
+      tl.fromTo("#blob-1", { x: 0, y: 0 }, { x: 320, y: 480, duration: 7.6, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0)
+        .fromTo("#blob-2", { x: 0, y: 0 }, { x: -380, y: -420, duration: 6.33, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0)
+        .fromTo("#blob-3", { x: 0, y: 0, scale: 1 }, { x: -200, y: 300, scale: 1.3, duration: 5.42, ease: "sine.inOut", yoyo: true, repeat: 6 }, 0)
+        .fromTo("#grain", { x: 0, y: 0 }, { x: -110, y: -90, duration: DURATION, ease: "none" }, 0)
+        .fromTo("#progress", { scaleX: 0 }, { scaleX: 1, duration: DURATION, ease: "none" }, 0);
+      motes.forEach((m, i) => tl.fromTo(m, { y: 0 }, { y: -320 - (i % 6) * 70, duration: DURATION, ease: "none" }, 0));
+
+      // --- Untertitel ---
+      chunks.forEach(({ node, words, start, end }) => {
+        F(node, { autoAlpha: 0, scale: 0.7, y: 24 }, { autoAlpha: 1, scale: 1, y: 0, duration: 0.14, ease: "back.out(3)" }, start);
+        const step = Math.min(0.2, ((end - start) * 0.7) / words.length);
+        F(words, { opacity: 0.3, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power2.out", stagger: step }, start);
+        F(node, { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.07 }, end - 0.07);
+      });
+
+      const fibersL = $$("#pec-l .fiber");
+      const fibersR = $$("#pec-r .fiber");
+      const bubbles = $$(".bubble");
+
+      // ---------- 1 · HOOK (0 – 2) ----------
+      tl.fromTo("#s1", { autoAlpha: 1 }, { autoAlpha: 1, duration: 0.01 }, 0);
+      zoom(0, 2, 1, 1.07);
+      tl.fromTo("#h-small", { scale: 1.1 }, { scale: 1, duration: 0.4, ease: "power3.out" }, 0);
+      sfx("boom", 0, 0.8);
+      tl.fromTo("#h-big", { scale: 1.18 }, { scale: 1, duration: 0.45, ease: "power3.out" }, 0);
+      F("#h-big", { scale: 1, rotation: 0 }, { scale: 1.1, rotation: -2, duration: 0.12, ease: "power3.in", yoyo: true, repeat: 1 }, 0.75);
+      impact(0.87, 1.2);
+
+      // ---------- 2 · TORSO-SCAN + FRAGE (2 – 5.4) ----------
+      whip("#s1", "#s2", 2.0);
+      F("#torso", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 2.0);
+      // Brustmuskel zunächst nur als Kontur, Fasern noch unsichtbar
+      F([fibersL, fibersR], { opacity: 0 }, { opacity: 0, duration: 0.01 }, 2.0);
+      F("#arrows", { opacity: 0 }, { opacity: 0, duration: 0.01 }, 2.0);
+      F(["#pec-leader", "#pec-dot"], { opacity: 0 }, { opacity: 0, duration: 0.01 }, 2.0);
+      F("#scanline", { opacity: 0, y: 0 }, { opacity: 1, y: 0, duration: 0.15 }, 2.3);
+      F("#scanline", { y: 0 }, { y: 780, duration: 1.3, ease: "power1.inOut" }, 2.3);
+      out("#scanline", 3.55, 0.2);
+      sfx("whoosh", 2.3, 0.4);
+      pop("#s2-q", 2.4);
+      F(".pec-shape", { opacity: 0.35 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, 2.9);
+      slam("#s2-qmark", 4.05, 0.9);
+      out("#s2-qmark", 5.0, 0.25);
+
+      // ---------- 3 · ANATOMIE & REIZE (5.4 – 14.9) ----------
+      zoom(5.4, 9.5, 1, 1.05);
+      out("#s2-q", 5.3, 0.2);
+      // Fasern wachsen vom Ursprung Richtung Oberarm
+      F(fibersL, { opacity: 0 }, { opacity: 1, duration: 0.18, stagger: 0.025 }, 5.5);
+      F(fibersR, { opacity: 0 }, { opacity: 1, duration: 0.18, stagger: 0.025 }, 5.5);
+      F(["#pec-leader", "#pec-dot"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, 5.9);
+      pop("#pec-label", 6.0);
+      slam("#chip-mech", 6.9, 0.7, -2);
+      slam("#chip-meta", 7.9, 0.7, 2);
+      // Mechanisch: Spannungspfeile pulsieren
+      F("#arrows", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 7.0);
+      F(".arrow-l", { x: 0 }, { x: -14, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5 }, 7.0);
+      F(".arrow-r", { x: 0 }, { x: 14, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 5 }, 7.0);
+      // Metabolisch: Bläschen steigen auf
+      bubbles.forEach((b, i) => {
+        const t0 = 8.0 + (i % 14) * 0.08;
+        F(b, { opacity: 0, y: 0 }, { keyframes: [{ opacity: 0.9, y: -20, duration: 0.4 }, { opacity: 0, y: -70, duration: 0.6 }] }, t0);
+      });
+      // Fokus auf mechanische Spannung
+      out("#chip-meta", 9.2, 0.2);
+      out("#chip-mech", 9.25, 0.2);
+      out("#pec-label", 9.25, 0.2);
+      out(["#pec-leader", "#pec-dot"], 9.25, 0.2);
+      slam("#s3-stamp", 9.6, 1.1, -2);
+      pop("#tension-meter", 10.4, 0.3);
+      // Muskel kontrahiert unter Last – 3 Wiederholungen, Spannung steigt
+      for (let r = 0; r < 3; r++) {
+        const t0 = 10.6 + r * 1.3;
+        F("#pec-l", { scaleX: 1 }, { scaleX: 0.9, svgOrigin: "188 262", duration: 0.5, ease: "power2.inOut", yoyo: true, repeat: 1 }, t0);
+        F("#pec-r", { scaleX: 1 }, { scaleX: 0.9, svgOrigin: "612 262", duration: 0.5, ease: "power2.inOut", yoyo: true, repeat: 1 }, t0);
+        F("#arrows", { opacity: 0.5 }, { opacity: 1, duration: 0.5, yoyo: true, repeat: 1 }, t0);
+        sfx("heart", t0 + 0.45, 0.6);
+      }
+      F("#tension-fill", { scaleX: 0 }, { scaleX: 1, duration: 3.8, ease: "power1.in" }, 10.6);
+
+      // ---------- 4 · IM MUSKEL (14.9 – 22.2) ----------
+      // Zoom in den Muskel hinein
+      F("#torso", { scale: 1 }, { scale: 3.2, transformOrigin: "34% 40%", duration: 0.45, ease: "power3.in" }, 14.45);
+      whip("#s2", "#s4", 14.9);
+      zoom(14.9, 7.3, 1, 1.04);
+      pop("#crumbs", 15.0, 0.3);
+      F($$(".crumb"), { color: "#8f8b83" }, { color: "#f0d590", duration: 0.12, stagger: 0.28 }, 15.1);
+      for (let i = 0; i < 4; i++) sfx("tick", 15.1 + i * 0.28, 0.5);
+      pop("#s4-title", 15.6);
+      pop("#sarc", 15.7, 0.45);
+      // Last zieht, Sarkomer kontrahiert (Querbrücken)
+      F("#load-arrows", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 16.3);
+      F("#load-l", { x: 0 }, { x: -16, duration: 0.25, yoyo: true, repeat: 5, ease: "sine.inOut" }, 16.3);
+      F("#load-r", { x: 0 }, { x: 16, duration: 0.25, yoyo: true, repeat: 5, ease: "sine.inOut" }, 16.3);
+      F(["#z-left", "#actin-l"], { x: 0 }, { x: 40, duration: 0.5, ease: "power2.inOut", yoyo: true, repeat: 1 }, 16.4);
+      F(["#z-right", "#actin-r"], { x: 0 }, { x: -40, duration: 0.5, ease: "power2.inOut", yoyo: true, repeat: 1 }, 16.4);
+      F($$("#myosin .head"), { opacity: 1 }, { opacity: 0.3, duration: 0.12, yoyo: true, repeat: 3, stagger: 0.01 }, 16.4);
+      sfx("hit", 16.85, 0.6);
+      // Anpassung: Signale → Proteinsynthese → neues Filament (parallel eingebaut)
+      slam("#chip-signal", 17.3, 0.6, -2);
+      slam("#chip-protein", 17.9, 0.7, 2);
+      pop("#new-row", 18.3, 0.4);
+      sfx("tick", 18.35, 0.6);
+      // Querschnitt: Fasern werden dicker
+      out(["#crumbs", "#s4-title", "#sarc", "#chip-signal", "#chip-protein"], 18.85, 0.2);
+      F("#xsec", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, 19.0);
+      slam("#s4-stamp", 19.5, 1, -2);
+      pop("#timeline", 19.6, 0.3);
+      F("#timeline-fill", { scaleX: 0 }, { scaleX: 1, duration: 2.2, ease: "power1.inOut" }, 19.8);
+      F(xFibers, { scale: 1 }, { scale: 1.3, svgOrigin: (i) => xFibers[i].getAttribute("cx") + " " + xFibers[i].getAttribute("cy"), duration: 2.2, ease: "power1.inOut", stagger: 0.01 }, 19.8);
+      F("#xsec-outline", { scale: 1 }, { scale: 1.12, svgOrigin: "0 0", duration: 2.2, ease: "power1.inOut" }, 19.8);
+
+      // ---------- 5 · WIEDERHOLUNGEN (22.2 – 27.9) ----------
+      whip("#s4", "#s5", 22.2);
+      zoom(22.2, 5.7, 1, 1.05);
+      pop("#s5-label", 22.4, 0.3);
+      pop("#s5-num", 22.4, 0.3);
+      pop("#s5-dumbbell", 22.6, 0.3);
+      F("#s5-dumbbell", { y: 0 }, { y: -40, duration: 0.14, yoyo: true, repeat: 19, ease: "sine.inOut" }, 22.9);
+      counter($("#s5-num"), 0, 100, 22.5, 3.0, (v) => v, 14, "power1.in");
+      F("#s5-strike", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.22, ease: "power4.out" }, 25.7);
+      impact(25.75, 1.1);
+      glitch(25.8);
+      F("#s5-num", { opacity: 1 }, { opacity: 0.35, duration: 0.2 }, 25.9);
+      slam("#s5-verdict", 26.3, 1.2, -2);
+
+      // ---------- 6 · PROGRESSIVE OVERLOAD (27.9 – 33) ----------
+      whip("#s5", "#s6", 27.9);
+      zoom(27.9, 5.1, 1, 1.05);
+      bars.forEach((b, i) => {
+        F(b, { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.3, ease: "back.out(1.6)" }, 28.2 + i * 0.32);
+        sfx("tick", 28.2 + i * 0.32, 0.45 + i * 0.05);
+      });
+      F("#trend", { opacity: 0, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, clipPath: "inset(0 0% 0 0)", duration: 2.4, ease: "none" }, 28.3);
+      pop("#trend-head", 30.7, 0.25);
+      slam("#s6-stamp", 30.95, 1.1, -2);
+
+      // ---------- 7 · ABSCHLUSS (33 – 38) ----------
+      whip("#s6", "#s7", 33.0);
+      zoom(33.0, 5, 1, 1.06);
+      slam("#s7-a", 33.2, 1);
+      slam("#s7-b", 34.0, 1.3, -2);
+      F("#s7-line", { scaleX: 0, opacity: 1 }, { scaleX: 1, opacity: 1, duration: 0.6, ease: "power3.inOut" }, 34.6);
+      pop("#s7-cta", 35.0, 0.45);
+      sfx("tick", 35.05, 0.6);
+      F("#s7-pill", { scale: 1 }, { scale: 1.06, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut" }, 35.8);
+      F("#s7", { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 1.15, duration: 0.35, ease: "power2.in" }, 37.6);
+      sfx("whoosh", 37.6, 0.5);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+
+      // ==================================================================
+      // Eigenständige Wiedergabe beim direkten Öffnen im Browser
+      // ==================================================================
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          if (window.__hyperframes || window.__player) return;
+          const html = document.documentElement;
+          const root = $("#root");
+          const audio = $("#soundtrack");
+          html.classList.add("standalone");
+          const font = document.createElement("link");
+          font.rel = "stylesheet";
+          font.href = "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap";
+          document.head.appendChild(font);
+          const fit = () => {
+            const s = Math.min(window.innerWidth / 1080, (window.innerHeight - 50) / 1920);
+            root.style.transform = "translate(-50%, calc(-50% - 22px)) scale(" + s + ")";
+          };
+          fit();
+          window.addEventListener("resize", fit);
+          const syncAudio = () => {
+            try {
+              audio.currentTime = tl.time();
+              if (!tl.paused()) audio.play();
+            } catch (e) {}
+          };
+          tl.eventCallback("onUpdate", () => ($("#player-progress").style.width = (tl.progress() * 100).toFixed(2) + "%"));
+          tl.eventCallback("onComplete", () => {
+            tl.restart();
+            syncAudio();
+          });
+          const toggle = () => {
+            if (tl.paused()) {
+              tl.resume();
+              syncAudio();
+            } else {
+              tl.pause();
+              audio.pause();
+            }
+          };
+          root.addEventListener("click", toggle);
+          $("#player-bar").addEventListener("click", (e) => {
+            tl.progress(e.offsetX / e.currentTarget.clientWidth);
+            syncAudio();
+          });
+          window.addEventListener("keydown", (e) => {
+            if (e.key === "r" || e.key === "R") {
+              tl.restart();
+              syncAudio();
+            }
+            if (e.key === " ") toggle();
+            if (e.key === "f" || e.key === "F") document.documentElement.requestFullscreen?.();
+          });
+          $("#player-start").addEventListener("click", () => {
+            $("#player-start").remove();
+            tl.play(0);
+            syncAudio();
+          });
+        }, 300);
+      });
+    </script>
+  </body>
+</html>

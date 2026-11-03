@@ -17,7 +17,10 @@
     "short:voice": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --render",
     "short:voice-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --samples",
     "short:voice-google": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --engine google --render",
-    "short:voice-google-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --engine google --samples"
+    "short:voice-google-samples": "cd hyperframes/short-andere-denken && python3 tools/make_voice.py --engine google --samples",
+    "brust:render": "cd hyperframes/short-brusttraining && hyperframes render -o renders/brusttraining.mp4",
+    "brust:voice": "cd hyperframes/short-brusttraining && python3 tools/make_voice.py --render",
+    "brust:voice-google": "cd hyperframes/short-brusttraining && python3 tools/make_voice.py --engine google --render"
   },
   "dependencies": {
     "@hyperframes/core": "^0.9.8",
