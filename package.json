@@ -9,7 +9,9 @@
   "scripts": {
     "remotion:studio": "remotion studio src/remotion/index.ts",
     "remotion:render": "remotion render src/remotion/index.ts HelloWorld out/remotion.mp4",
-    "hyperframes": "hyperframes"
+    "hyperframes": "hyperframes",
+    "hyperframes:preview": "cd hyperframes/beispiel && hyperframes preview",
+    "hyperframes:render": "cd hyperframes/beispiel && hyperframes render -o renders/beispiel.mp4"
   },
   "dependencies": {
     "@hyperframes/core": "^0.9.8",

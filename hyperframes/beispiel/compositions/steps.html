@@ -1,0 +1,80 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Inter", sans-serif;
+      color: #f5f7fb;
+    }
+    #steps-stack {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 56px;
+    }
+    #steps-heading {
+      font-size: 80px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    #steps-row {
+      display: flex;
+      gap: 48px;
+    }
+    .steps-card {
+      width: 440px;
+      padding: 48px 40px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+    }
+    .steps-num {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .steps-label {
+      margin-top: 20px;
+      font-size: 52px;
+      font-weight: 700;
+    }
+    .steps-desc {
+      margin-top: 12px;
+      font-size: 32px;
+      font-weight: 400;
+      color: #9aa4b8;
+    }
+  </style>
+  <div id="root" data-composition-id="steps" data-width="1920" data-height="1080">
+    <div id="steps-stack" class="clip" data-start="0" data-duration="4.5">
+      <h2 id="steps-heading">So entsteht ein Video</h2>
+      <div id="steps-row">
+        <div class="steps-card">
+          <div class="steps-num" style="color: #ff7a45">1</div>
+          <div class="steps-label">HTML</div>
+          <div class="steps-desc">Szenen mit HTML und CSS gestalten</div>
+        </div>
+        <div class="steps-card">
+          <div class="steps-num" style="color: #ffb347">2</div>
+          <div class="steps-label">Animation</div>
+          <div class="steps-desc">Bewegung mit einer GSAP-Timeline</div>
+        </div>
+        <div class="steps-card">
+          <div class="steps-num" style="color: #4cc9f0">3</div>
+          <div class="steps-label">Rendern</div>
+          <div class="steps-desc">Als MP4 exportieren</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#steps-heading", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.1)
+      .fromTo(".steps-card", { opacity: 0, y: 80, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)", stagger: 0.35 }, 0.5)
+      .fromTo("#steps-heading, #steps-row", { opacity: 1 }, { opacity: 0, duration: 0.45, ease: "power2.in", immediateRender: false }, 3.95);
+    window.__timelines["steps"] = tl;
+  </script>
+</template>

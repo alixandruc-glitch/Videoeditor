@@ -15,6 +15,10 @@ npm install
 
 ## HyperFrames
 
+Example project: `hyperframes/beispiel/` (3 scenes, 12 s, 1920×1080), rendered result in `hyperframes/beispiel/renders/beispiel.mp4`.
+
+- `npm run hyperframes:preview` – preview the example in the HyperFrames studio
+- `npm run hyperframes:render` – render the example to `hyperframes/beispiel/renders/beispiel.mp4`
 - `npx hyperframes init` – scaffold a new HTML composition project
 - `npx hyperframes preview` – preview compositions in the studio
 - `npx hyperframes render` – render a composition to MP4/WebM

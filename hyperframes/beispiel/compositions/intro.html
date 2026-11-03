@@ -1,0 +1,51 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Inter", sans-serif;
+      color: #f5f7fb;
+    }
+    #intro-stack {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    #intro-bar {
+      width: 520px;
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #ff7a45, #4cc9f0);
+    }
+    #intro-title {
+      font-size: 150px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    #intro-subtitle {
+      font-size: 48px;
+      font-weight: 400;
+      color: #9aa4b8;
+    }
+  </style>
+  <div id="root" data-composition-id="intro" data-width="1920" data-height="1080">
+    <div id="intro-stack" class="clip" data-start="0" data-duration="4">
+      <div id="intro-bar"></div>
+      <h1 id="intro-title">Videoeditor</h1>
+      <p id="intro-subtitle">Ein Beispielvideo mit HyperFrames</p>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // Titel steht schon im ersten Frame (Thumbnail); Balken und Untertitel kommen dazu.
+    tl.fromTo("#intro-bar", { scaleX: 0.15 }, { scaleX: 1, duration: 0.9, ease: "power3.out" }, 0)
+      .fromTo("#intro-title", { scale: 1.06 }, { scale: 1, duration: 1.2, ease: "power3.out" }, 0)
+      .fromTo("#intro-subtitle", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 0.8)
+      .fromTo("#intro-bar, #intro-title, #intro-subtitle", { opacity: 1 }, { opacity: 0, duration: 0.45, ease: "power2.in", stagger: 0.05, immediateRender: false }, 3.4);
+    window.__timelines["intro"] = tl;
+  </script>
+</template>

@@ -1,0 +1,49 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      font-family: "Inter", sans-serif;
+      color: #f5f7fb;
+    }
+    #outro-stack {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    #outro-line {
+      font-size: 110px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    #outro-dot {
+      color: #ff7a45;
+    }
+    #outro-cmd {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 44px;
+      padding: 20px 40px;
+      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.45);
+      color: #4cc9f0;
+    }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1920" data-height="1080">
+    <div id="outro-stack" class="clip" data-start="0" data-duration="3.5">
+      <h2 id="outro-line">Jetzt du<span id="outro-dot">.</span></h2>
+      <div id="outro-cmd">npx hyperframes render</div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#outro-line", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power4.out" }, 0.1)
+      .fromTo("#outro-cmd", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.8)
+      .fromTo("#outro-dot", { color: "#ff7a45" }, { color: "#4cc9f0", duration: 0.6, ease: "sine.inOut", immediateRender: false }, 1.5)
+      .fromTo("#outro-line, #outro-cmd", { opacity: 1 }, { opacity: 0, duration: 0.45, ease: "power2.in", immediateRender: false }, 2.95);
+    window.__timelines["outro"] = tl;
+  </script>
+</template>
