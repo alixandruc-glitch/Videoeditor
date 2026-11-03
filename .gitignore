@@ -2,3 +2,5 @@ node_modules/
 out/
 .DS_Store
 .hyperframes/
+renders/work-*/
+renders/.*.hf-transaction-*/
