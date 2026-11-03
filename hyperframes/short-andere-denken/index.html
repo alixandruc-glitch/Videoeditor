@@ -1,0 +1,1098 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Was denken die anderen? – YouTube Short</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg: #07080b;
+        --ink: #f4f1ea;
+        --muted: #8d8a83;
+        --gold: #c9a45c;
+        --gold-soft: #e2c88f;
+        --serif: "Playfair Display", Georgia, serif;
+        --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      #root {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: var(--sans);
+        color: var(--ink);
+      }
+
+      /* ---------- Bewegter Hintergrund ---------- */
+      #bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+      }
+      #blob-1 {
+        width: 900px;
+        height: 900px;
+        left: -260px;
+        top: 120px;
+        background: rgba(201, 164, 92, 0.16);
+      }
+      #blob-2 {
+        width: 1000px;
+        height: 1000px;
+        left: 380px;
+        top: 900px;
+        background: rgba(60, 78, 112, 0.22);
+      }
+      #blob-3 {
+        width: 700px;
+        height: 700px;
+        left: 300px;
+        top: -260px;
+        background: rgba(120, 96, 60, 0.14);
+      }
+      #dust {
+        position: absolute;
+        inset: 0;
+      }
+      .mote {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--gold-soft);
+      }
+      #grain {
+        position: absolute;
+        left: -120px;
+        top: -120px;
+        width: 1320px;
+        height: 2160px;
+        opacity: 0.09;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+      }
+      #vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.75) 100%);
+      }
+      #frame-lines {
+        position: absolute;
+        inset: 60px;
+        border: 1px solid rgba(201, 164, 92, 0.14);
+      }
+
+      /* ---------- Szenen ---------- */
+      .scene {
+        position: absolute;
+        inset: 0;
+        visibility: hidden;
+      }
+      .kicker {
+        font-family: var(--sans);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+      .term {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 230px;
+        text-align: center;
+      }
+      .term-name {
+        margin-top: 22px;
+        font-family: var(--serif);
+        font-size: 96px;
+        font-weight: 700;
+        line-height: 1.05;
+        color: var(--ink);
+      }
+      .term-line {
+        width: 220px;
+        height: 3px;
+        margin: 30px auto 0;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      }
+      .term-src {
+        margin-top: 22px;
+        font-size: 28px;
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      .headline {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        text-align: center;
+        font-family: var(--serif);
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .dot {
+        position: absolute;
+        width: 34px;
+        height: 34px;
+        margin: -17px 0 0 -17px;
+        border-radius: 50%;
+        background: rgba(244, 241, 234, 0.32);
+      }
+
+      /* Szene 1 – Einstieg */
+      #s1-kicker {
+        position: absolute;
+        top: 300px;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      #s1-eyes {
+        position: absolute;
+        inset: 0;
+      }
+      .mini-eye {
+        position: absolute;
+        width: 120px;
+        height: 60px;
+        margin: -30px 0 0 -60px;
+      }
+      #s1-eye {
+        position: absolute;
+        left: 190px;
+        top: 560px;
+        width: 700px;
+        height: 350px;
+      }
+      #s1-head {
+        top: 960px;
+        font-size: 124px;
+        line-height: 1.05;
+      }
+      #s1-q {
+        top: 1110px;
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        font-size: 88px;
+        color: var(--gold-soft);
+      }
+
+      /* Szene 2 – Spotlight */
+      #s2-cone {
+        position: absolute;
+        left: 300px;
+        top: 620px;
+        width: 480px;
+        height: 520px;
+        clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+        background: linear-gradient(180deg, rgba(226, 200, 143, 0.55), rgba(226, 200, 143, 0.06));
+        transform-origin: 50% 0;
+      }
+      #s2-floor {
+        position: absolute;
+        left: 330px;
+        top: 1080px;
+        width: 420px;
+        height: 110px;
+        border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(226, 200, 143, 0.45), transparent 70%);
+      }
+      #s2-me {
+        position: absolute;
+        left: 540px;
+        top: 1090px;
+        width: 54px;
+        height: 54px;
+        margin: -27px 0 0 -27px;
+        border-radius: 50%;
+        background: var(--ink);
+        box-shadow: 0 0 60px rgba(226, 200, 143, 0.9);
+      }
+
+      /* Szene 3 – Experiment */
+      #s3-head {
+        top: 360px;
+        font-size: 78px;
+        line-height: 1.12;
+      }
+      #s3-kicker {
+        position: absolute;
+        top: 270px;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      #s3-shirt {
+        position: absolute;
+        left: 400px;
+        top: 600px;
+        width: 280px;
+        height: 260px;
+      }
+      .bar-row {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+      }
+      #s3-row1 {
+        top: 960px;
+      }
+      #s3-row2 {
+        top: 1110px;
+      }
+      .bar-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .bar-label {
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 28px;
+        letter-spacing: 0.2em;
+      }
+      .bar-val {
+        font-family: var(--serif);
+        font-size: 64px;
+      }
+      .bar-track {
+        margin-top: 14px;
+        height: 22px;
+        border-radius: 11px;
+        background: rgba(244, 241, 234, 0.08);
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        width: 100%;
+        border-radius: 11px;
+        transform-origin: 0 50%;
+      }
+      #s3-fill1 {
+        background: rgba(244, 241, 234, 0.55);
+      }
+      #s3-fill2 {
+        background: linear-gradient(90deg, #a8843f, var(--gold-soft));
+      }
+      #s3-val2 {
+        color: var(--gold-soft);
+      }
+
+      /* Szene 4 – Zugehörigkeit */
+      #s4-fire {
+        position: absolute;
+        left: 340px;
+        top: 780px;
+        width: 400px;
+        height: 400px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(226, 200, 143, 0.5), transparent 65%);
+      }
+      #s4-ring {
+        position: absolute;
+        left: 290px;
+        top: 730px;
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        border: 2px dashed rgba(201, 164, 92, 0.45);
+      }
+      #s4-out {
+        background: var(--ink);
+      }
+      #s4-label {
+        position: absolute;
+        left: 610px;
+        top: 1220px;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 44px;
+        color: var(--muted);
+      }
+
+      /* Szene 5 – Sozialer Schmerz */
+      .venn {
+        position: absolute;
+        top: 760px;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        border: 2px solid rgba(201, 164, 92, 0.75);
+        background: rgba(201, 164, 92, 0.16);
+        mix-blend-mode: screen;
+      }
+      #s5-a {
+        left: 170px;
+      }
+      #s5-b {
+        left: 490px;
+      }
+      .venn-label {
+        position: absolute;
+        top: 940px;
+        width: 220px;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+      }
+      #s5-la {
+        left: 175px;
+      }
+      #s5-lb {
+        left: 685px;
+      }
+      #s5-core {
+        position: absolute;
+        left: 480px;
+        top: 910px;
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 236, 190, 0.95), rgba(226, 200, 143, 0) 70%);
+      }
+      #s5-core-label {
+        position: absolute;
+        left: 340px;
+        width: 400px;
+        top: 1200px;
+        text-align: center;
+        font-size: 28px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--gold-soft);
+      }
+
+      /* Szene 6 – Spiegel-Selbst */
+      #s6-mirror {
+        position: absolute;
+        left: 300px;
+        top: 650px;
+        width: 480px;
+        height: 600px;
+        border-radius: 50%;
+        border: 6px solid var(--gold);
+        box-shadow: 0 0 80px rgba(201, 164, 92, 0.25), inset 0 0 80px rgba(201, 164, 92, 0.18);
+        overflow: hidden;
+        background: radial-gradient(ellipse at 50% 40%, rgba(60, 70, 90, 0.5), rgba(7, 8, 11, 0.9));
+      }
+      #s6-figure {
+        position: absolute;
+        left: 140px;
+        top: 150px;
+        width: 200px;
+        height: 330px;
+        transform-origin: 50% 100%;
+      }
+      #s6-shine {
+        position: absolute;
+        left: -200px;
+        top: -100px;
+        width: 140px;
+        height: 900px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+        transform: rotate(20deg);
+      }
+      .thought {
+        position: absolute;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 50px;
+        color: var(--gold-soft);
+        white-space: nowrap;
+      }
+
+      /* Szene 7 – Wendung */
+      #s7-kicker {
+        position: absolute;
+        top: 270px;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      #s7-head {
+        top: 350px;
+        font-size: 74px;
+        line-height: 1.15;
+      }
+      #s7-crowd {
+        position: absolute;
+        inset: 0;
+      }
+      .mini-cone {
+        position: absolute;
+        width: 110px;
+        height: 150px;
+        margin: -150px 0 0 -55px;
+        clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+        background: linear-gradient(180deg, rgba(226, 200, 143, 0.4), rgba(226, 200, 143, 0.04));
+        transform-origin: 50% 0;
+      }
+
+      /* Szene 8 – Abschluss */
+      #s8-kicker {
+        position: absolute;
+        top: 560px;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+      #s8-head {
+        top: 650px;
+        font-size: 100px;
+        line-height: 1.1;
+      }
+      #s8-line {
+        position: absolute;
+        left: 390px;
+        top: 1010px;
+        width: 300px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      }
+      #s8-sub {
+        top: 1060px;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 64px;
+        color: var(--gold-soft);
+      }
+      #s8-src {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        top: 1300px;
+        text-align: center;
+        font-size: 24px;
+        line-height: 1.6;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+      }
+
+      /* ---------- Untertitel ---------- */
+      #captions {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 1360px;
+        height: 260px;
+      }
+      .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        text-align: center;
+        font-size: 58px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--ink);
+        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.85);
+        visibility: hidden;
+      }
+      .w {
+        display: inline-block;
+        margin: 0 0.12em;
+      }
+      .w.gold {
+        color: var(--gold-soft);
+      }
+
+      /* ---------- Übergänge ---------- */
+      #sweep {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 260px;
+        background: linear-gradient(180deg, transparent, rgba(226, 200, 143, 0.22), transparent);
+        opacity: 0;
+      }
+      #fade {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        opacity: 0;
+      }
+
+      /* ---------- Nur beim direkten Öffnen im Browser ---------- */
+      #player-ui {
+        display: none;
+      }
+      html.standalone,
+      html.standalone body {
+        width: 100%;
+        height: 100%;
+        background: #000;
+      }
+      html.standalone #root {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform-origin: 50% 50%;
+      }
+      html.standalone #player-ui {
+        display: block;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 10px 16px 14px;
+        font: 13px/1.4 system-ui, sans-serif;
+        color: #bbb;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+        z-index: 10;
+      }
+      #player-bar {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+      #player-progress {
+        height: 100%;
+        width: 0;
+        background: #c9a45c;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="56.5"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Bewegter Hintergrund -->
+      <div id="bg">
+        <div id="blob-1" class="blob"></div>
+        <div id="blob-2" class="blob"></div>
+        <div id="blob-3" class="blob"></div>
+        <div id="dust"></div>
+        <div id="grain"></div>
+        <div id="vignette"></div>
+        <div id="frame-lines"></div>
+      </div>
+
+      <!-- 1 · Einstieg (0 – 6.5 s) -->
+      <section id="s1" class="scene">
+        <div id="s1-eyes"></div>
+        <div id="s1-kicker" class="kicker">Ein Gedankenexperiment</div>
+        <svg id="s1-eye" viewBox="0 0 700 350">
+          <defs>
+            <clipPath id="s1-clip">
+              <path d="M30 175 Q350 -45 670 175 Q350 395 30 175Z" />
+            </clipPath>
+            <radialGradient id="s1-iris-grad">
+              <stop offset="0" stop-color="#1a1408" />
+              <stop offset="0.45" stop-color="#7a5c28" />
+              <stop offset="1" stop-color="#e2c88f" />
+            </radialGradient>
+          </defs>
+          <g id="s1-lid">
+            <path d="M30 175 Q350 -45 670 175 Q350 395 30 175Z" fill="rgba(244,241,234,0.06)" />
+            <g clip-path="url(#s1-clip)">
+              <g id="s1-iris">
+                <circle cx="350" cy="175" r="105" fill="url(#s1-iris-grad)" />
+                <circle cx="350" cy="175" r="42" fill="#050505" />
+                <circle cx="385" cy="140" r="14" fill="#f4f1ea" opacity="0.85" />
+              </g>
+            </g>
+            <path d="M30 175 Q350 -45 670 175 Q350 395 30 175Z" fill="none" stroke="#c9a45c" stroke-width="4" />
+          </g>
+        </svg>
+        <h1 id="s1-head" class="headline">Alle sehen dich.</h1>
+        <div id="s1-q" class="headline">… oder?</div>
+      </section>
+
+      <!-- 2 · Spotlight-Effekt (6.5 – 15 s) -->
+      <section id="s2" class="scene">
+        <div class="term">
+          <div class="kicker term-kicker">Psychologischer Begriff</div>
+          <div class="term-name">Spotlight-Effekt</div>
+          <div class="term-line"></div>
+          <div class="term-src">Gilovich, Medvec &amp; Savitsky · 2000</div>
+        </div>
+        <div id="s2-crowd"></div>
+        <div id="s2-cone"></div>
+        <div id="s2-floor"></div>
+        <div id="s2-me"></div>
+      </section>
+
+      <!-- 3 · Das Experiment (15 – 21.5 s) -->
+      <section id="s3" class="scene">
+        <div id="s3-kicker" class="kicker">Das T-Shirt-Experiment</div>
+        <h2 id="s3-head" class="headline">Wie viele haben<br />es bemerkt?</h2>
+        <svg id="s3-shirt" viewBox="0 0 280 260">
+          <path
+            d="M90 10 L40 30 L5 90 L50 115 L65 90 L65 250 L215 250 L215 90 L230 115 L275 90 L240 30 L190 10 Q140 55 90 10Z"
+            fill="rgba(201,164,92,0.12)"
+            stroke="#c9a45c"
+            stroke-width="4"
+            stroke-linejoin="round"
+          />
+          <text x="140" y="175" text-anchor="middle" font-family="Georgia, serif" font-size="64" fill="#e2c88f">?!</text>
+        </svg>
+        <div id="s3-row1" class="bar-row">
+          <div class="bar-top"><span class="bar-label">Geschätzt</span><span id="s3-val1" class="bar-val">0 %</span></div>
+          <div class="bar-track"><div id="s3-fill1" class="bar-fill"></div></div>
+        </div>
+        <div id="s3-row2" class="bar-row">
+          <div class="bar-top"><span class="bar-label">Tatsächlich</span><span id="s3-val2" class="bar-val">0 %</span></div>
+          <div class="bar-track"><div id="s3-fill2" class="bar-fill"></div></div>
+        </div>
+      </section>
+
+      <!-- 4 · Zugehörigkeit (21.5 – 30 s) -->
+      <section id="s4" class="scene">
+        <div class="term">
+          <div class="kicker term-kicker">Psychologischer Begriff</div>
+          <div class="term-name">Zugehörigkeits&shy;bedürfnis</div>
+          <div class="term-line"></div>
+          <div class="term-src">„Need to Belong“ · Baumeister &amp; Leary · 1995</div>
+        </div>
+        <div id="s4-fire"></div>
+        <div id="s4-ring"></div>
+        <div id="s4-group"></div>
+        <div id="s4-label">allein = Gefahr</div>
+      </section>
+
+      <!-- 5 · Sozialer Schmerz (30 – 37.5 s) -->
+      <section id="s5" class="scene">
+        <div class="term">
+          <div class="kicker term-kicker">Psychologischer Begriff</div>
+          <div class="term-name">Sozialer Schmerz</div>
+          <div class="term-line"></div>
+          <div class="term-src">Eisenberger, Lieberman &amp; Williams · 2003</div>
+        </div>
+        <div id="s5-a" class="venn"></div>
+        <div id="s5-b" class="venn"></div>
+        <div id="s5-la" class="venn-label">Körper&shy;licher<br />Schmerz</div>
+        <div id="s5-lb" class="venn-label">Soziale<br />Ablehnung</div>
+        <div id="s5-core"></div>
+        <div id="s5-core-label">Gleiches Alarmsystem</div>
+      </section>
+
+      <!-- 6 · Spiegel-Selbst (37.5 – 44.5 s) -->
+      <section id="s6" class="scene">
+        <div class="term">
+          <div class="kicker term-kicker">Psychologischer Begriff</div>
+          <div class="term-name">Spiegel-Selbst</div>
+          <div class="term-line"></div>
+          <div class="term-src">„Looking-Glass Self“ · Charles H. Cooley · 1902</div>
+        </div>
+        <div id="s6-mirror">
+          <svg id="s6-figure" viewBox="0 0 200 330">
+            <circle cx="100" cy="70" r="58" fill="rgba(244,241,234,0.85)" />
+            <path d="M10 330 Q10 160 100 150 Q190 160 190 330Z" fill="rgba(244,241,234,0.85)" />
+          </svg>
+          <div id="s6-shine"></div>
+        </div>
+        <div id="s6-t1" class="thought" style="left: 90px; top: 700px">zu laut?</div>
+        <div id="s6-t2" class="thought" style="left: 700px; top: 800px">seltsam?</div>
+        <div id="s6-t3" class="thought" style="left: 70px; top: 1060px">peinlich?</div>
+        <div id="s6-t4" class="thought" style="left: 640px; top: 1170px">nicht genug?</div>
+      </section>
+
+      <!-- 7 · Die Wendung (44.5 – 51 s) -->
+      <section id="s7" class="scene">
+        <div id="s7-kicker" class="kicker">Die Wahrheit</div>
+        <h2 id="s7-head" class="headline">Jeder ist die Hauptfigur<br />seines eigenen Films.</h2>
+        <div id="s7-crowd"></div>
+      </section>
+
+      <!-- 8 · Abschluss (51 – 56.5 s) -->
+      <section id="s8" class="scene">
+        <div id="s8-kicker" class="kicker">Was denken die anderen?</div>
+        <h2 id="s8-head" class="headline">Du bist weniger<br />beobachtet, als<br />du glaubst.</h2>
+        <div id="s8-line"></div>
+        <div id="s8-sub" class="headline">Darin liegt deine Freiheit.</div>
+        <div id="s8-src">
+          Quellen: Gilovich et al. (2000) · Baumeister &amp; Leary (1995)<br />
+          Eisenberger et al. (2003) · Cooley (1902)
+        </div>
+      </section>
+
+      <!-- Untertitel, Übergänge, Abblende -->
+      <div id="captions"></div>
+      <div id="sweep"></div>
+      <div id="fade"></div>
+    </div>
+
+    <div id="player-ui">
+      <div id="player-bar"><div id="player-progress"></div></div>
+      Klick: Pause / Weiter · R: Neustart · F: Vollbild
+    </div>
+
+    <script>
+      // ------------------------------------------------------------------
+      // Deterministische Zufallszahlen (kein Math.random – jeder Render ist gleich)
+      // ------------------------------------------------------------------
+      function rng(seed) {
+        let s = seed >>> 0;
+        return () => {
+          s = (s * 1664525 + 1013904223) >>> 0;
+          return s / 4294967296;
+        };
+      }
+      function el(tag, cls, parent, style) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (style) Object.assign(e.style, style);
+        parent.appendChild(e);
+        return e;
+      }
+
+      const DURATION = 56.5;
+
+      // Staubpartikel
+      const dust = document.getElementById("dust");
+      const rDust = rng(7);
+      const motes = [];
+      for (let i = 0; i < 38; i++) {
+        const size = 2 + rDust() * 5;
+        motes.push(
+          el("div", "mote", dust, {
+            left: rDust() * 1080 + "px",
+            top: rDust() * 1920 + "px",
+            width: size + "px",
+            height: size + "px",
+            opacity: (0.15 + rDust() * 0.45).toFixed(2),
+          }),
+        );
+      }
+
+      // Szene 1: kleine Augen ringsum
+      const eyesWrap = document.getElementById("s1-eyes");
+      const eyePos = [
+        [140, 470], [930, 430], [90, 1000], [990, 980], [200, 1280], [880, 1290],
+        [540, 430], [180, 1700], [900, 1690], [960, 700], [120, 730], [540, 1730],
+      ];
+      const miniEyes = eyePos.map(([x, y]) => {
+        const e = el("div", "mini-eye", eyesWrap, { left: x + "px", top: y + "px" });
+        e.innerHTML =
+          '<svg viewBox="0 0 120 60" width="120" height="60"><path d="M4 30 Q60 -6 116 30 Q60 66 4 30Z" fill="none" stroke="#c9a45c" stroke-width="3" opacity="0.7"/><circle cx="60" cy="30" r="13" fill="#e2c88f" opacity="0.8"/><circle cx="60" cy="30" r="6" fill="#050505"/></svg>';
+        return e;
+      });
+
+      // Szene 2: Menschenmenge
+      const crowd2 = document.getElementById("s2-crowd");
+      const r2 = rng(42);
+      const crowdDots = [];
+      for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 7; col++) {
+          const x = 150 + col * 130 + (row % 2) * 65 + (r2() - 0.5) * 30;
+          const y = 830 + row * 95 + (r2() - 0.5) * 24;
+          if (Math.abs(x - 540) < 110 && y > 1000) continue; // Platz für "dich"
+          crowdDots.push(el("div", "dot", crowd2, { left: x + "px", top: y + "px" }));
+        }
+      }
+
+      // Szene 4: Gruppe ums Feuer + Außenseiter
+      const group4 = document.getElementById("s4-group");
+      const groupDots = [];
+      for (let i = 0; i < 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        groupDots.push(
+          el("div", "dot", group4, {
+            left: 540 + Math.cos(a) * 170 + "px",
+            top: 980 + Math.sin(a) * 170 + "px",
+            background: "rgba(244,241,234,0.7)",
+          }),
+        );
+      }
+      const outsider = el("div", "dot", group4, { left: "710px", top: "980px" });
+      outsider.id = "s4-out";
+
+      // Szene 7: jede Person mit eigenem Spotlight
+      const crowd7 = document.getElementById("s7-crowd");
+      const r7 = rng(99);
+      const people7 = [];
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 5; col++) {
+          const x = 170 + col * 185 + (row % 2) * 60 + (r7() - 0.5) * 30;
+          const y = 870 + row * 160 + (r7() - 0.5) * 20;
+          const cone = el("div", "mini-cone", crowd7, { left: x + "px", top: y + "px" });
+          const dot = el("div", "dot", crowd7, {
+            left: x + "px",
+            top: y + "px",
+            background: "rgba(244,241,234,0.9)",
+            boxShadow: "0 0 26px rgba(226,200,143,0.6)",
+          });
+          people7.push({ cone, dot });
+        }
+      }
+
+      // ------------------------------------------------------------------
+      // Untertitel: [start, ende, text]; *Wort* = gold hervorgehoben
+      // ------------------------------------------------------------------
+      const CUES = [
+        [0.4, 2.6, "Du betrittst einen Raum."],
+        [2.6, 4.6, "Und spürst sofort: *Alle* schauen dich an."],
+        [4.6, 6.3, "Aber stimmt das *wirklich?*"],
+
+        [6.8, 9.3, "Dein Gehirn stellt dich ins *Rampenlicht.*"],
+        [9.3, 12.0, "Psychologen nennen das den *Spotlight-Effekt.*"],
+        [12.0, 14.7, "Wir *überschätzen,* wie sehr andere uns bemerken."],
+
+        [15.3, 17.8, "Studierende trugen ein *peinliches* T-Shirt."],
+        [17.8, 19.7, "Sie dachten: *Die Hälfte* merkt es."],
+        [19.7, 21.3, "In Wahrheit: nur *jeder Vierte.*"],
+
+        [21.8, 24.4, "Doch woher kommt diese *Angst?*"],
+        [24.4, 27.2, "Für unsere Vorfahren hieß Ausschluss: *Lebensgefahr.*"],
+        [27.2, 29.8, "Wer *dazugehört,* überlebt."],
+
+        [30.3, 33.0, "Bis heute reagiert dein Gehirn auf *Ablehnung*"],
+        [33.0, 35.4, "ähnlich wie auf *körperlichen Schmerz.*"],
+        [35.4, 37.3, "Ablehnung tut *wirklich* weh."],
+
+        [37.8, 40.4, "Wir sehen uns durch die *Augen der anderen*"],
+        [40.4, 42.6, "– oder durch das, was wir dort *vermuten.*"],
+        [42.6, 44.3, "Das *Spiegel-Selbst.*"],
+
+        [44.8, 47.2, "Aber hier ist die *Wahrheit:*"],
+        [47.2, 49.4, "Alle stehen in ihrem *eigenen* Rampenlicht."],
+        [49.4, 50.8, "Sie denken an sich. *Nicht an dich.*"],
+      ];
+      const capWrap = document.getElementById("captions");
+      const capEls = CUES.map(([, , text]) => {
+        const cap = el("div", "cap", capWrap);
+        const words = [];
+        // *Wörter in Sternen* werden gold
+        text.split(/(\*[^*]+\*)/).forEach((part) => {
+          if (!part) return;
+          const gold = part.startsWith("*");
+          part
+            .replace(/\*/g, "")
+            .split(" ")
+            .filter(Boolean)
+            .forEach((w) => {
+              const s = el("span", "w" + (gold ? " gold" : ""), cap);
+              s.textContent = w;
+              words.push(s);
+            });
+        });
+        return { cap, words };
+      });
+
+      // ------------------------------------------------------------------
+      // Timeline
+      // ------------------------------------------------------------------
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // Hintergrund in ständiger, langsamer Bewegung
+      tl.fromTo("#blob-1", { x: 0, y: 0 }, { x: 260, y: 420, duration: 14, ease: "sine.inOut", yoyo: true, repeat: 3 }, 0)
+        .fromTo("#blob-2", { x: 0, y: 0 }, { x: -340, y: -380, duration: 11, ease: "sine.inOut", yoyo: true, repeat: 4 }, 0)
+        .fromTo("#blob-3", { x: 0, y: 0, scale: 1 }, { x: -120, y: 300, scale: 1.3, duration: 9, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0)
+        .fromTo("#grain", { x: 0, y: 0 }, { x: -110, y: -90, duration: DURATION, ease: "none" }, 0);
+      motes.forEach((m, i) => {
+        tl.fromTo(m, { y: 0 }, { y: -260 - (i % 5) * 60, duration: DURATION, ease: "none" }, 0);
+      });
+
+      // Szenen-Übergänge: Blur-Zoom + goldener Lichtstreifen
+      function sceneIn(sel, t) {
+        tl.fromTo(sel, { autoAlpha: 0, scale: 1.08, filter: "blur(16px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "power3.out", immediateRender: t === 0 }, t);
+      }
+      function sceneOut(sel, t) {
+        tl.fromTo(sel, { autoAlpha: 1, scale: 1, filter: "blur(0px)" }, { autoAlpha: 0, scale: 0.94, filter: "blur(12px)", duration: 0.6, ease: "power2.in", immediateRender: false }, t);
+      }
+      function sweep(t) {
+        tl.fromTo("#sweep", { y: -300 }, { y: 1950, duration: 1.0, ease: "power2.inOut", immediateRender: false }, t - 0.5)
+          .fromTo("#sweep", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out", immediateRender: false }, t - 0.5)
+          .fromTo("#sweep", { opacity: 1 }, { opacity: 0, duration: 0.3, ease: "power1.in", immediateRender: false }, t + 0.2);
+      }
+      function termIn(scene, t) {
+        const q = (s) => document.querySelector(scene + " " + s);
+        tl.fromTo(q(".term-kicker"), { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, t)
+          .fromTo(q(".term-name"), { opacity: 0, y: 50, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power4.out" }, t + 0.15)
+          .fromTo(q(".term-line"), { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power3.inOut" }, t + 0.4)
+          .fromTo(q(".term-src"), { opacity: 0 }, { opacity: 1, duration: 0.6 }, t + 0.7);
+      }
+
+      // Untertitel: Wort für Wort, mit kleinem "Pop"
+      CUES.forEach(([start, end], i) => {
+        const { cap, words } = capEls[i];
+        const step = Math.min(0.22, ((end - start) * 0.6) / words.length);
+        tl.fromTo(cap, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.2, ease: "power2.out" }, start);
+        tl.fromTo(words, { opacity: 0.12, y: 16, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.22, ease: "back.out(2.4)", stagger: step }, start);
+        tl.fromTo(cap, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -18, duration: 0.18, ease: "power2.in", immediateRender: false }, end - 0.2);
+      });
+
+      // ---------- 1 · Einstieg ----------
+      sceneIn("#s1", 0);
+      tl.fromTo("#s1-kicker", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.8 }, 0.1)
+        .fromTo("#s1-lid", { scaleY: 0.04, transformOrigin: "50% 50%" }, { scaleY: 1, duration: 0.9, ease: "power3.out" }, 0.3)
+        .fromTo("#s1-iris", { x: -150 }, { x: 0, duration: 1.0, ease: "power3.inOut" }, 1.1)
+        .fromTo(miniEyes, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)", stagger: 0.08 }, 2.7)
+        .fromTo("#s1-head", { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power3.out" }, 2.7)
+        .fromTo("#s1-eye", { scale: 1 }, { scale: 1.12, duration: 3.5, ease: "none" }, 2.6)
+        .fromTo(miniEyes, { opacity: 1 }, { opacity: 0.25, duration: 0.5, immediateRender: false }, 4.6)
+        .fromTo("#s1-q", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }, 4.7)
+        .fromTo("#s1-lid", { scaleY: 1 }, { scaleY: 0.05, duration: 0.18, ease: "power2.in", yoyo: true, repeat: 1, immediateRender: false }, 5.3);
+      sweep(6.5);
+      sceneOut("#s1", 5.95);
+
+      // ---------- 2 · Spotlight-Effekt ----------
+      sceneIn("#s2", 6.5);
+      tl.fromTo(crowdDots, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.03 }, 6.6)
+        .fromTo("#s2-me", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 7.1)
+        .fromTo("#s2-cone", { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.9, ease: "power3.out" }, 7.4)
+        .fromTo("#s2-floor", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, 7.8)
+        .fromTo("#s2-me", { scale: 1 }, { scale: 1.25, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 7, immediateRender: false }, 8.2)
+        .fromTo(crowdDots, { opacity: 1 }, { opacity: 0.35, duration: 0.8, immediateRender: false }, 8.5);
+      termIn("#s2", 9.3);
+      sweep(15);
+      sceneOut("#s2", 14.45);
+
+      // ---------- 3 · Experiment ----------
+      sceneIn("#s3", 15);
+      const counter1 = { v: 0 };
+      const counter2 = { v: 0 };
+      const val1 = document.getElementById("s3-val1");
+      const val2 = document.getElementById("s3-val2");
+      tl.fromTo("#s3-kicker", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 15.1)
+        .fromTo("#s3-head", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 15.3)
+        .fromTo("#s3-shirt", { opacity: 0, y: 40, rotation: -6 }, { opacity: 1, y: 0, rotation: 0, duration: 0.9, ease: "back.out(1.6)" }, 15.6)
+        .fromTo("#s3-shirt", { rotation: 0 }, { rotation: 4, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 7, immediateRender: false }, 16.5)
+        .fromTo("#s3-row1", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5 }, 17.6)
+        .fromTo("#s3-fill1", { scaleX: 0 }, { scaleX: 0.5, duration: 1.3, ease: "power3.out" }, 17.9)
+        .fromTo(counter1, { v: 0 }, { v: 50, duration: 1.3, ease: "power3.out", onUpdate: () => (val1.textContent = "~" + Math.round(counter1.v) + " %") }, 17.9)
+        .fromTo("#s3-row2", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5 }, 19.4)
+        .fromTo("#s3-fill2", { scaleX: 0 }, { scaleX: 0.23, duration: 1.2, ease: "power3.out" }, 19.7)
+        .fromTo(counter2, { v: 0 }, { v: 23, duration: 1.2, ease: "power3.out", immediateRender: false, onUpdate: () => (val2.textContent = "~" + Math.round(counter2.v) + " %") }, 19.7);
+      sweep(21.5);
+      sceneOut("#s3", 20.95);
+
+      // ---------- 4 · Zugehörigkeit ----------
+      sceneIn("#s4", 21.5);
+      tl.fromTo("#s4-fire", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 1.2, ease: "power2.out" }, 21.6)
+        .fromTo("#s4-fire", { scale: 1 }, { scale: 1.12, duration: 0.7, ease: "sine.inOut", yoyo: true, repeat: 9, immediateRender: false }, 22.8)
+        .fromTo(groupDots.concat([outsider]), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.05 }, 21.8)
+        .fromTo("#s4-ring", { opacity: 0, scale: 0.8, rotation: 0 }, { opacity: 1, scale: 1, rotation: 40, duration: 2.5, ease: "power2.out" }, 22.2);
+      termIn("#s4", 23.6);
+      tl.fromTo(outsider, { x: 0, y: 0 }, { x: 230, y: 230, duration: 2.2, ease: "power2.inOut" }, 24.8)
+        .fromTo(outsider, { background: "rgba(244,241,234,1)" }, { background: "rgba(140,138,131,0.35)", duration: 1.6, immediateRender: false }, 25.4)
+        .fromTo("#s4-label", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 26.6)
+        .fromTo(groupDots, { scale: 1 }, { scale: 1.2, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 1, stagger: 0.04, immediateRender: false }, 27.4);
+      sweep(30);
+      sceneOut("#s4", 29.45);
+
+      // ---------- 5 · Sozialer Schmerz ----------
+      sceneIn("#s5", 30);
+      termIn("#s5", 30.3);
+      tl.fromTo("#s5-a", { opacity: 0, x: -170 }, { opacity: 1, x: -170, duration: 0.6 }, 30.6)
+        .fromTo("#s5-b", { opacity: 0, x: 170 }, { opacity: 1, x: 170, duration: 0.6 }, 31.1)
+        .fromTo("#s5-la", { opacity: 0, x: -150 }, { opacity: 1, x: -150, duration: 0.6 }, 30.8)
+        .fromTo("#s5-lb", { opacity: 0, x: 150 }, { opacity: 1, x: 150, duration: 0.6 }, 31.3)
+        .fromTo(["#s5-a", "#s5-la"], { x: (i) => (i === 0 ? -170 : -150) }, { x: 0, duration: 1.4, ease: "power3.inOut", immediateRender: false }, 33.0)
+        .fromTo(["#s5-b", "#s5-lb"], { x: (i) => (i === 0 ? 170 : 150) }, { x: 0, duration: 1.4, ease: "power3.inOut", immediateRender: false }, 33.0)
+        .fromTo("#s5-core", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1.3, duration: 0.6, ease: "power2.out" }, 34.3)
+        .fromTo("#s5-core", { scale: 1.3 }, { scale: 1.7, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 5, immediateRender: false }, 34.9)
+        .fromTo("#s5-core-label", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 34.6);
+      sweep(37.5);
+      sceneOut("#s5", 36.95);
+
+      // ---------- 6 · Spiegel-Selbst ----------
+      sceneIn("#s6", 37.5);
+      tl.fromTo("#s6-mirror", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 1.0, ease: "power3.out" }, 37.6)
+        .fromTo("#s6-figure", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8 }, 38.1)
+        .fromTo("#s6-shine", { x: 0 }, { x: 900, duration: 1.6, ease: "power2.inOut" }, 38.4);
+      termIn("#s6", 38.6);
+      tl.fromTo("#s6-figure", { scaleX: 1, scaleY: 1, skewX: 0 }, { scaleX: 0.8, scaleY: 0.82, skewX: -6, duration: 1.4, ease: "power2.inOut", immediateRender: false }, 40.4)
+        .fromTo("#s6-mirror", { borderColor: "rgba(201,164,92,1)" }, { borderColor: "rgba(201,164,92,0.45)", duration: 1.2, immediateRender: false }, 40.6)
+        .fromTo(["#s6-t1", "#s6-t2", "#s6-t3", "#s6-t4"], { opacity: 0, y: 20, scale: 0.9 }, { opacity: 0.9, y: 0, scale: 1, duration: 0.5, ease: "power2.out", stagger: 0.35 }, 40.6)
+        .fromTo(["#s6-t1", "#s6-t2", "#s6-t3", "#s6-t4"], { y: 0 }, { y: -18, duration: 1.0, ease: "sine.inOut", yoyo: true, repeat: 2, stagger: 0.2, immediateRender: false }, 42.0)
+        .fromTo("#s6-shine", { x: 900 }, { x: 0, duration: 1.4, ease: "power2.inOut", immediateRender: false }, 42.6);
+      sweep(44.5);
+      sceneOut("#s6", 43.95);
+
+      // ---------- 7 · Die Wendung ----------
+      sceneIn("#s7", 44.5);
+      tl.fromTo("#s7-kicker", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 44.7)
+        .fromTo(people7.map((p) => p.dot), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.04 }, 44.8)
+        .fromTo(people7.map((p) => p.cone), { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.6, ease: "power3.out", stagger: { each: 0.08, from: "center" } }, 47.2)
+        .fromTo("#s7-head", { opacity: 0, y: 30, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" }, 47.4)
+        .fromTo(people7.map((p) => p.dot), { y: 0 }, { y: -10, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 3, stagger: 0.05, immediateRender: false }, 48.6);
+      sweep(51);
+      sceneOut("#s7", 50.45);
+
+      // ---------- 8 · Abschluss ----------
+      sceneIn("#s8", 51);
+      tl.fromTo("#s8-kicker", { opacity: 0, y: -16 }, { opacity: 1, y: 0, duration: 0.8 }, 51.2)
+        .fromTo("#s8-head", { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.1, ease: "power3.out" }, 51.4)
+        .fromTo("#s8-line", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.inOut" }, 52.6)
+        .fromTo("#s8-sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 53.4)
+        .fromTo("#s8-src", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 54.2)
+        .fromTo("#s8-head", { scale: 1 }, { scale: 1.04, duration: 4, ease: "none", immediateRender: false }, 52.5)
+        .fromTo("#fade", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.in" }, 55.7);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+
+      // ------------------------------------------------------------------
+      // Eigenständige Wiedergabe: nur wenn die Datei direkt im Browser
+      // geöffnet wird. In HyperFrames (Vorschau/Render) steuert die Runtime
+      // die Timeline selbst – dann passiert hier nichts.
+      // ------------------------------------------------------------------
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          if (window.__hyperframes || window.__player) return;
+          const html = document.documentElement;
+          const root = document.getElementById("root");
+          const progress = document.getElementById("player-progress");
+          html.classList.add("standalone");
+          // Schriften für die Browser-Wiedergabe (beim Rendern liefert HyperFrames sie selbst)
+          const font = document.createElement("link");
+          font.rel = "stylesheet";
+          font.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap";
+          document.head.appendChild(font);
+          const fit = () => {
+            const s = Math.min(window.innerWidth / 1080, (window.innerHeight - 50) / 1920);
+            root.style.transform = "translate(-50%, calc(-50% - 22px)) scale(" + s + ")";
+          };
+          fit();
+          window.addEventListener("resize", fit);
+          tl.eventCallback("onUpdate", () => (progress.style.width = (tl.progress() * 100).toFixed(2) + "%"));
+          root.addEventListener("click", () => (tl.isActive() ? tl.pause() : tl.progress() === 1 ? tl.restart() : tl.resume()));
+          document.getElementById("player-bar").addEventListener("click", (e) => {
+            tl.progress(e.offsetX / e.currentTarget.clientWidth);
+          });
+          window.addEventListener("keydown", (e) => {
+            if (e.key === "r" || e.key === "R") tl.restart();
+            if (e.key === " ") root.click();
+            if (e.key === "f" || e.key === "F") document.documentElement.requestFullscreen?.();
+          });
+          tl.play(0);
+        }, 300);
+      });
+    </script>
+  </body>
+</html>
